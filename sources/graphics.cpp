@@ -77,6 +77,13 @@ bool Graphics::HasValidationLayers()
 	return (true);
 }
 
+VkInstance& Graphics::GetInstance()
+{
+	if (!instance) throw (std::runtime_error("Instance requested but not yet created"));
+
+	return (instance);
+}
+
 VkInstance Graphics::instance = nullptr;
 bool Graphics::validationLayersEnabled = false;
 std::vector<const char*> Graphics::validationLayers = {"VK_LAYER_KHRONOS_validation"};

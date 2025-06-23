@@ -21,4 +21,6 @@ class Graphics
 		static void Create();
 
 		static void Destroy();
+
+		static VkInstance& GetInstance();
 };
