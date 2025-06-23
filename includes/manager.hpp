@@ -1,11 +1,13 @@
 #pragma once
 
 #include "window.hpp"
+#include "device.hpp"
 
 class Manager
 {
 	private:
 		static Window window;
+		static Device device;
 
 	public:
 		Manager();

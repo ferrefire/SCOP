@@ -1,7 +1,14 @@
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
+#include "manager.hpp"
 
 int main(int argc, char **argv)
 {
+	Manager::Create();
+
+	while (true)
+	{
+		/* code */
+	}
 	
+	Manager::Destroy();
+	return (0);
 }

@@ -1,10 +1,22 @@
 #include "manager.hpp"
 
+#include "graphics.hpp"
+
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
 #include <stdexcept>
 #include <iostream>
+
+Manager::Manager()
+{
+
+}
+
+Manager::~Manager()
+{
+	Destroy();
+}
 
 void Manager::Create()
 {
@@ -28,15 +40,28 @@ void Manager::CreateGLFW()
 	window.Create();
 }
 
+void Manager::CreateVulkan()
+{
+	Graphics::Create();
+	device.Create();
+}
+
 void Manager::Destroy()
 {
-	window.Destroy();
 	DestroyGLFW();
+	DestroyVulkan();
 }
 
 void Manager::DestroyGLFW()
 {
+	window.Destroy();
 	glfwTerminate();
+}
+
+void Manager::DestroyVulkan()
+{
+	device.Destroy();
+	Graphics::Destroy();
 }
 
 Window Manager::window;

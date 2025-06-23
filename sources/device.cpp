@@ -13,7 +13,7 @@ Device::Device()
 
 Device::~Device()
 {
-
+	Destroy();
 }
 
 void Device::Create()
@@ -121,5 +121,11 @@ void Device::CreateQueues()
 
 void Device::Destroy()
 {
-
+	if (logicalDevice)
+	{
+		vkDestroyDevice(logicalDevice, nullptr);
+		logicalDevice = nullptr;
+		physicalDevice = nullptr;
+		queueFamilies = QueueFamilies{};
+	}
 }
