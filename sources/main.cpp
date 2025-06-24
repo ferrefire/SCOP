@@ -5,6 +5,8 @@
 
 int main(int argc, char **argv)
 {
+	std::cout << "Program started" << std::endl;
+
 	try
 	{
 		Manager::Create();
@@ -15,5 +17,8 @@ int main(int argc, char **argv)
 	}
 	
 	Manager::Destroy();
+
+	std::cout << "Program ended" << std::endl;
+
 	return (0);
 }

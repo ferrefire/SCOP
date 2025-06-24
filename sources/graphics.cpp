@@ -55,7 +55,7 @@ void Graphics::CreateSwapchain()
 	VkSwapchainCreateInfoKHR createInfo{};
 	createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
 	createInfo.surface = window.GetSurface();
-	createInfo.minImageCount = 2;
+	createInfo.minImageCount = windowConfig.capabilities.minImageCount;
 	createInfo.imageFormat = windowConfig.format.format;
 	createInfo.imageColorSpace = windowConfig.format.colorSpace;
 	createInfo.imageExtent = windowConfig.extent;

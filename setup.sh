@@ -1,6 +1,6 @@
 project=scop
 path=$(pwd)
-dev="-DDEV=ON"
+dev="-DDEV=OFF"
 release=0
 
 run_command () {
@@ -58,6 +58,7 @@ run_command () {
 				exit 1
 			fi
 		fi
+	fi
 }
 
 if test -f setup.sh; then

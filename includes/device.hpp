@@ -4,10 +4,11 @@
 #include <GLFW/glfw3.h>
 
 enum class QueueType { Graphics, Compute, Present };
+enum class DeviceType { Integrated, Discrete, CPU, Virtual };
 
 struct DeviceConfig
 {
-	bool discrete = false;
+	DeviceType type = DeviceType::Integrated;
 	bool tesselation = false;
 	bool anisotropic = false;
 };
