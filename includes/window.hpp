@@ -22,7 +22,6 @@ class Window
 		VkSurfaceKHR surface = nullptr;
 		WindowConfig config{};
 
-		bool CanPresent(Device& device);
 		void SelectFormat(Device& device);
 		void SelectPresentMode(Device& device);
 
@@ -38,4 +37,6 @@ class Window
 
 		VkSurfaceKHR& GetSurface();
 		WindowConfig GetConfig();
+
+		bool CanPresent(Device& device, int presentQueueIndex);
 };

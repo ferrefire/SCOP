@@ -44,8 +44,11 @@ void Manager::CreateGLFW()
 void Manager::CreateVulkan()
 {
 	Graphics::Create();
-	device.Create();
+	device.CreatePhysical();
 	window.CreateSurface(device);
+	device.SelectQueues();
+	device.CreateLogical();
+	device.RetrieveQueues();
 	Graphics::CreateSwapchain();
 }
 

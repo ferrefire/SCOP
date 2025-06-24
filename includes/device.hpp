@@ -3,12 +3,22 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
+#include <vector>
+
 enum class QueueType { Graphics, Compute, Present };
-enum class DeviceType { Integrated, Discrete, CPU, Virtual };
+
+enum class DeviceType 
+{ 
+	Integrated = VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU,
+	Discrete = VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU,
+	Virtual = VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU,
+	CPU = VK_PHYSICAL_DEVICE_TYPE_CPU,
+	Best = -1,
+};
 
 struct DeviceConfig
 {
-	DeviceType type = DeviceType::Integrated;
+	DeviceType type = DeviceType::Best;
 	bool tesselation = false;
 	bool anisotropic = false;
 };
@@ -24,23 +34,31 @@ struct QueueFamilies
 	VkQueue presentQueue = nullptr;
 };
 
+struct DeviceInfo
+{
+	VkPhysicalDevice physicalDevice = nullptr;
+	VkPhysicalDeviceProperties deviceProperties{};
+	VkPhysicalDeviceFeatures deviceFeatures{};
+	DeviceType type = DeviceType::Best;
+};
+
 class Device
 {
 	private:
 		VkPhysicalDevice physicalDevice = nullptr;
 		VkDevice logicalDevice = nullptr;
 		QueueFamilies queueFamilies{};
-
-		void CreatePhysical(const DeviceConfig& config);
-		void CreateLogical(const DeviceConfig& config);
-		void CreateQueues();
+		DeviceConfig config{};
 
 	public:
 		Device();
 		~Device();
 
-		void Create();
-		void Create(const DeviceConfig& config);
+		void SetConfig(DeviceConfig deviceConfig);
+		void CreatePhysical();
+		void CreateLogical();
+		void SelectQueues();
+		void RetrieveQueues();
 
 		void Destroy();
 
@@ -49,4 +67,8 @@ class Device
 		uint32_t GetQueueIndex(QueueType type);
 
 		void PrintProperties();
+
+		static std::vector<DeviceInfo> GetAvailableDevices();
+		static DeviceInfo GetBestDevice(DeviceConfig& config);
+		static int DeviceTypePriority(DeviceType type);
 };

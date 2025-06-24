@@ -1,6 +1,8 @@
 #include "device.hpp"
 
 #include "graphics.hpp"
+#include "utilities.hpp"
+#include "manager.hpp"
 
 #include <stdexcept>
 #include <vector>
@@ -18,22 +20,12 @@ Device::~Device()
 	Destroy();
 }
 
-void Device::Create()
+void Device::SetConfig(DeviceConfig deviceConfig)
 {
-	DeviceConfig config{};
-	Create(config);
-
-	PrintProperties();
+	config = deviceConfig;
 }
 
-void Device::Create(const DeviceConfig& config)
-{
-	CreatePhysical(config);
-	CreateLogical(config);
-	CreateQueues();
-}
-
-void Device::CreatePhysical(const DeviceConfig& config)
+void Device::CreatePhysical()
 {
 	if (physicalDevice) throw (std::runtime_error("Physical device already exists"));
 
@@ -44,51 +36,22 @@ void Device::CreatePhysical(const DeviceConfig& config)
 	std::vector<VkPhysicalDevice> physicalDevices(deviceCount);
 	vkEnumeratePhysicalDevices(Graphics::GetInstance(), &deviceCount, physicalDevices.data());
 
-	for (const VkPhysicalDevice& device : physicalDevices)
-	{
-		VkPhysicalDeviceProperties deviceProperties{};
-		VkPhysicalDeviceFeatures deviceFeatures{};
-		vkGetPhysicalDeviceProperties(device, &deviceProperties);
-		vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
-
-		if (config.type == DeviceType::Integrated && deviceProperties.deviceType != VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU) continue;
-		else if (config.type == DeviceType::Discrete && deviceProperties.deviceType != VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) continue;
-		else if (config.type == DeviceType::CPU && deviceProperties.deviceType != VK_PHYSICAL_DEVICE_TYPE_CPU) continue;
-		else if (config.type == DeviceType::Virtual && deviceProperties.deviceType != VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU) continue;
-		else if (config.tesselation && !deviceFeatures.tessellationShader) continue;
-		else if (config.anisotropic && !deviceFeatures.samplerAnisotropy) continue;
-
-		uint32_t queueCount;
-		vkGetPhysicalDeviceQueueFamilyProperties(device, &queueCount, nullptr);
-
-		std::vector<VkQueueFamilyProperties> queueFamilyProperties(queueCount);
-		vkGetPhysicalDeviceQueueFamilyProperties(device, &queueCount, queueFamilyProperties.data());
-		for (int i = 0; i < queueCount; i++)
-		{
-			if (queueFamilyProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
-			{
-				queueFamilies.graphicsFamily = i;
-				queueFamilies.presentFamily = i;
-				break;
-			}
-		}
-
-		if (queueFamilies.graphicsFamily == -1) continue;
-
-		physicalDevice = device;
-	}
+	physicalDevice = GetBestDevice(config).physicalDevice;
 
 	if (!physicalDevice) throw (std::runtime_error("Failed to find a suitable GPU"));
+
+	PrintProperties();
 }
 
-void Device::CreateLogical(const DeviceConfig& config)
+void Device::CreateLogical()
 {
 	if (logicalDevice) throw (std::runtime_error("Logical device already exists"));
 	if (!physicalDevice) throw (std::runtime_error("Physical device does not exist"));
+	if (queueFamilies.graphicsFamily == -1 ||queueFamilies.presentFamily == -1) throw (std::runtime_error("Queue families not complete"));
 
 	float queuePriority = 1.0f;
 	std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
-	std::set<uint32_t> uniqueQueueFamilies = {static_cast<uint32_t>(queueFamilies.graphicsFamily), static_cast<uint32_t>(queueFamilies.presentFamily)};
+	std::set<uint32_t> uniqueQueueFamilies = {CUI(queueFamilies.graphicsFamily), CUI(queueFamilies.presentFamily)};
 
 	for (uint32_t queueFamily : uniqueQueueFamilies)
 	{
@@ -118,10 +81,43 @@ void Device::CreateLogical(const DeviceConfig& config)
 		throw (std::runtime_error("Failed to create logical device"));
 }
 
-void Device::CreateQueues()
+void Device::SelectQueues()
 {
-	if (queueFamilies.graphicsFamily == -1 || queueFamilies.presentFamily == -1) throw (std::runtime_error("Queues already exist"));
+	if (!physicalDevice) throw (std::runtime_error("Physical device does not exist"));
+
+	Window& window = Manager::GetWindow();
+
+	uint32_t queueCount;
+	vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueCount, nullptr);
+	std::vector<VkQueueFamilyProperties> queueFamilyProperties(queueCount);
+	vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueCount, queueFamilyProperties.data());
+
+	for (int i = 0; i < queueCount; i++)
+	{
+		if (queueFamilyProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
+		{
+			if (queueFamilies.graphicsFamily == -1) queueFamilies.graphicsFamily = i;
+
+			if (queueFamilies.presentFamily == -1 && window.CanPresent(*this, i))
+			{
+				queueFamilies.presentFamily = i;
+				queueFamilies.graphicsFamily = i;
+			}
+		}
+
+		if (queueFamilies.computeFamily == -1 && queueFamilyProperties[i].queueFlags & VK_QUEUE_COMPUTE_BIT)
+		{
+			if (queueFamilies.presentFamily != i && queueFamilies.presentFamily != i) queueFamilies.computeFamily = i;
+		}
+	}
+
+	if (queueFamilies.graphicsFamily == -1 || queueFamilies.presentFamily == -1) throw (std::runtime_error("Failed to find required queue families"));
+}
+
+void Device::RetrieveQueues()
+{
 	if (!logicalDevice) throw (std::runtime_error("Logical device does not exist"));
+	if (queueFamilies.graphicsFamily == -1 ||queueFamilies.presentFamily == -1) throw (std::runtime_error("Queue families not complete"));
 
 	vkGetDeviceQueue(logicalDevice, queueFamilies.graphicsFamily, 0, &queueFamilies.graphicsQueue);
 	vkGetDeviceQueue(logicalDevice, queueFamilies.presentFamily, 0, &queueFamilies.presentQueue);
@@ -165,14 +161,14 @@ uint32_t Device::GetQueueIndex(QueueType type)
 
 	if (index == -1) throw (std::runtime_error("Queue index does not exist"));
 
-	return (static_cast<uint32_t>(index));
+	return (CUI(index));
 }
 
 void Device::PrintProperties()
 {
-	if (!physicalDevice || !logicalDevice)
+	if (!physicalDevice)
 	{
-		std::cout << "Device is not complete" << std::endl;
+		std::cout << "Physical device does not exist" << std::endl;
 		return;
 	}
 
@@ -195,4 +191,61 @@ void Device::PrintProperties()
 	std::cout << "Type: " << type << std::endl;
 	std::cout << "Driver version: " << deviceProperties.driverVersion << std::endl;
 	std::cout << "API version: " << deviceProperties.apiVersion << std::endl;
+}
+
+std::vector<DeviceInfo> Device::GetAvailableDevices()
+{
+	uint32_t deviceCount;
+	vkEnumeratePhysicalDevices(Graphics::GetInstance(), &deviceCount, nullptr);
+	if (deviceCount <= 0) throw (std::runtime_error("Failed to find a GPU with Vulkan support"));
+
+	std::vector<VkPhysicalDevice> physicalDevices(deviceCount);
+	vkEnumeratePhysicalDevices(Graphics::GetInstance(), &deviceCount, physicalDevices.data());
+
+	std::vector<DeviceInfo> availableDevices(deviceCount);
+	for (int i = 0; i < deviceCount; i++)
+	{
+		availableDevices[i].physicalDevice = physicalDevices[i];
+		vkGetPhysicalDeviceProperties(availableDevices[i].physicalDevice, &availableDevices[i].deviceProperties);
+		vkGetPhysicalDeviceFeatures(availableDevices[i].physicalDevice, &availableDevices[i].deviceFeatures);
+		availableDevices[i].type = static_cast<DeviceType>(availableDevices[i].deviceProperties.deviceType);
+	}
+
+	return (availableDevices);
+}
+
+DeviceInfo Device::GetBestDevice(DeviceConfig& config)
+{
+	std::vector<DeviceInfo> availableDevices = GetAvailableDevices();
+	bool any = config.type == DeviceType::Best;
+	int best = -1;
+	
+	for (int i = 0; i < availableDevices.size(); i++)
+	{
+		if (any && DeviceTypePriority(availableDevices[i].type) < DeviceTypePriority(config.type)) continue;
+		else if (!any && availableDevices[i].type != config.type) continue;
+		else if (config.tesselation && !availableDevices[i].deviceFeatures.tessellationShader) continue;
+		else if (config.anisotropic && !availableDevices[i].deviceFeatures.samplerAnisotropy) continue;
+
+		best = i;
+		config.type = availableDevices[i].type;
+	}
+
+	if (best == -1) throw (std::runtime_error("Failed to find the best suitable device"));
+
+	return (availableDevices[best]);
+}
+
+int Device::DeviceTypePriority(DeviceType type)
+{
+	switch (type)
+	{
+		case DeviceType::CPU: return (1);
+		case DeviceType::Virtual: return (2);
+		case DeviceType::Integrated: return (3);
+		case DeviceType::Discrete: return (4);
+		default: return (-1);
+	}
+
+	return (-1);
 }

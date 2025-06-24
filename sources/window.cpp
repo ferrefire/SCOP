@@ -1,6 +1,7 @@
 #include "window.hpp"
 
 #include "graphics.hpp"
+#include "utilities.hpp"
 
 #include <stdexcept>
 #include <iostream>
@@ -34,7 +35,7 @@ void Window::CreateSurface(Device& device)
 	if (glfwCreateWindowSurface(Graphics::GetInstance(), data, nullptr, &surface) != VK_SUCCESS)
 		throw (std::runtime_error("Failed to create window surface"));
 
-	if (!CanPresent(device)) throw (std::runtime_error("Window surface can not be presented to"));
+	//if (!CanPresent(device)) throw (std::runtime_error("Window surface can not be presented to"));
 
 	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device.GetPhysicalDevice(), surface, &config.capabilities);
 	SelectFormat(device);
@@ -76,12 +77,13 @@ WindowConfig Window::GetConfig()
 	return (config);
 }
 
-bool Window::CanPresent(Device& device)
+bool Window::CanPresent(Device& device, int presentQueueIndex = -1)
 {
 	if (!surface) throw (std::runtime_error("Window surface does not exist yet"));
 
+	uint32_t queueIndex = (presentQueueIndex == -1 ? device.GetQueueIndex(QueueType::Present) : CUI(presentQueueIndex));
 	VkBool32 canPresent = false;
-	vkGetPhysicalDeviceSurfaceSupportKHR(device.GetPhysicalDevice(), device.GetQueueIndex(QueueType::Present), surface, &canPresent);
+	vkGetPhysicalDeviceSurfaceSupportKHR(device.GetPhysicalDevice(), queueIndex, surface, &canPresent);
 
 	return (canPresent);
 }
