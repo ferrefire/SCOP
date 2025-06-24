@@ -27,8 +27,7 @@ void Manager::Create()
 	}
 	catch(const std::exception& e)
 	{
-		std::cerr << "Error during manager creation: " << e.what() << std::endl;
-		throw (std::runtime_error("Failed to create manager"));
+		throw (std::runtime_error(e.what()));
 	}
 }
 
@@ -46,9 +45,11 @@ void Manager::CreateVulkan()
 	Graphics::CreateInstance();
 	device.CreatePhysical();
 	window.CreateSurface(device);
+	std::cout << "Window created: " << window << std::endl;
 	device.SelectQueues();
 	device.CreateLogical();
 	device.RetrieveQueues();
+	std::cout << "Device created: " << device << std::endl;
 	Graphics::CreateSwapchain();
 }
 
@@ -80,6 +81,16 @@ Window& Manager::GetWindow()
 Device& Manager::GetDevice()
 {
 	return (device);
+}
+
+void Manager::Frame()
+{
+	glfwPollEvents();
+}
+
+bool Manager::ShouldClose()
+{
+	return (glfwWindowShouldClose(window.GetData()));
 }
 
 Window Manager::window;

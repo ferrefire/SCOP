@@ -5,6 +5,8 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
+#include <iostream>
+
 struct WindowConfig
 {
 	VkSurfaceCapabilitiesKHR capabilities{};
@@ -35,8 +37,11 @@ class Window
 		void DestroyFrame();
 		void DestroySurface();
 
+		GLFWwindow* GetData();
 		VkSurfaceKHR& GetSurface();
 		WindowConfig GetConfig();
 
 		bool CanPresent(Device& device, int presentQueueIndex);
 };
+
+std::ostream& operator<<(std::ostream& out, Window& window);

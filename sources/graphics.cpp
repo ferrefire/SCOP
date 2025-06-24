@@ -21,7 +21,7 @@ void Graphics::CreateInstance()
 	if (instance) throw (std::runtime_error("Vulkan instance already exists"));
 
 	if (HasValidationLayers()) validationLayersEnabled = true;
-	std::cout << "Vulkan validation layers: " << (validationLayersEnabled ? "enabled" : "disabled") << std::endl;
+	std::cout << "Vulkan validation layers: " << (validationLayersEnabled ? "enabled" : "disabled") << std::endl << std::endl;
 
 	VkApplicationInfo appInfo{};
 	appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -41,6 +41,8 @@ void Graphics::CreateInstance()
 	{
 		throw (std::runtime_error("Failed to create Vulkan instance"));
 	}
+
+	std::cout << "Vulkan instance created" << std::endl << std::endl;
 }
 
 void Graphics::CreateSwapchain()
@@ -75,6 +77,8 @@ void Graphics::CreateSwapchain()
 	vkGetSwapchainImagesKHR(device.GetLogicalDevice(), swapchain, &imageCount, nullptr);
 	swapchainImages.resize(imageCount);
 	vkGetSwapchainImagesKHR(device.GetLogicalDevice(), swapchain, &imageCount, swapchainImages.data());
+
+	std::cout << "Vulkan swapchain created" << std::endl << std::endl;
 }
 
 void Graphics::DestroyInstance()

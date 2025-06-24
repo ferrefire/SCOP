@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 
 #include <vector>
+#include <iostream>
 
 enum class QueueType { Graphics, Compute, Present };
 
@@ -66,9 +67,9 @@ class Device
 		VkDevice& GetLogicalDevice();
 		uint32_t GetQueueIndex(QueueType type);
 
-		void PrintProperties();
-
 		static std::vector<DeviceInfo> GetAvailableDevices();
 		static DeviceInfo GetBestDevice(DeviceConfig& config);
 		static int DeviceTypePriority(DeviceType type);
 };
+
+std::ostream& operator<<(std::ostream& out, Device& device);

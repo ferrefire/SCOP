@@ -25,4 +25,8 @@ class Manager
 
 		static Window& GetWindow();
 		static Device& GetDevice();
+
+		static void Frame();
+		
+		static bool ShouldClose();
 };

@@ -3,7 +3,7 @@ project(scop VERSION 1.0)
 
 option(DEV "DEV" OFF)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 FILE(GLOB SOURCE_FILES sources/*.cpp)

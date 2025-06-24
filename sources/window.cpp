@@ -24,8 +24,6 @@ void Window::CreateFrame()
 	data = glfwCreateWindow(width, height, "scop", nullptr, nullptr);
 
 	if (!data) throw (std::runtime_error("Failed to create window"));
-
-	std::cout << "Window succesfully created" << std::endl;
 }
 
 void Window::CreateSurface(Device& device)
@@ -63,6 +61,13 @@ void Window::DestroySurface()
 	}
 
 	config = WindowConfig{};
+}
+
+GLFWwindow* Window::GetData()
+{
+	if (!data) throw (std::runtime_error("Window data requested but not yet created"));
+
+	return (data);
 }
 
 VkSurfaceKHR& Window::GetSurface()
@@ -128,4 +133,16 @@ void Window::SelectPresentMode(Device& device)
 	}
 
 	if (!correctPresentModeFound) throw (std::runtime_error("Failed to find correct surface present mode"));
+}
+
+std::ostream& operator<<(std::ostream& out, Window& window)
+{
+	WindowConfig config = window.GetConfig();
+
+	out << std::endl;
+	out << "Width: " << config.extent.width << std::endl;
+	out << "Height: " << config.extent.height << std::endl;
+	//out << "Format: " << EnumName(config.format.format) << std::endl;
+	
+	return (out);
 }

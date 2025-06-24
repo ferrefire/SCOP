@@ -5,7 +5,7 @@
 
 int main(int argc, char **argv)
 {
-	std::cout << "Program started" << std::endl;
+	std::cout << "Program started" << std::endl << std::endl;
 
 	try
 	{
@@ -15,10 +15,15 @@ int main(int argc, char **argv)
 	{
 		std::cerr << "Failed at creation: " << e.what() << std::endl;
 	}
+
+	while (!Manager::ShouldClose())
+	{
+		Manager::Frame();
+	}
 	
 	Manager::Destroy();
 
-	std::cout << "Program ended" << std::endl;
+	std::cout << "Program ended" << std::endl << std::endl;
 
 	return (0);
 }

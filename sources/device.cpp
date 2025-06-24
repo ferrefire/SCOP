@@ -7,7 +7,6 @@
 #include <stdexcept>
 #include <vector>
 #include <set>
-#include <iostream>
 #include <string>
 
 Device::Device()
@@ -40,7 +39,7 @@ void Device::CreatePhysical()
 
 	if (!physicalDevice) throw (std::runtime_error("Failed to find a suitable GPU"));
 
-	PrintProperties();
+	//PrintProperties();
 }
 
 void Device::CreateLogical()
@@ -164,35 +163,6 @@ uint32_t Device::GetQueueIndex(QueueType type)
 	return (CUI(index));
 }
 
-void Device::PrintProperties()
-{
-	if (!physicalDevice)
-	{
-		std::cout << "Physical device does not exist" << std::endl;
-		return;
-	}
-
-	VkPhysicalDeviceProperties deviceProperties;
-	vkGetPhysicalDeviceProperties(physicalDevice, &deviceProperties);
-
-	std::string type = "Unknown";
-	switch (deviceProperties.deviceType)
-	{
-		case VK_PHYSICAL_DEVICE_TYPE_OTHER: type = "Other"; break;
-		case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU: type = "Integrated"; break;
-		case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU: type = "Discrete"; break;
-		case VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU: type = "Virtual"; break;
-		case VK_PHYSICAL_DEVICE_TYPE_CPU: type = "CPU"; break;
-	}
-
-	std::cout << "-Device properties-" << std::endl;
-	std::cout << "Name: " << deviceProperties.deviceName << std::endl;
-	std::cout << "Vendor: " << deviceProperties.vendorID << std::endl;
-	std::cout << "Type: " << type << std::endl;
-	std::cout << "Driver version: " << deviceProperties.driverVersion << std::endl;
-	std::cout << "API version: " << deviceProperties.apiVersion << std::endl;
-}
-
 std::vector<DeviceInfo> Device::GetAvailableDevices()
 {
 	uint32_t deviceCount;
@@ -248,4 +218,29 @@ int Device::DeviceTypePriority(DeviceType type)
 	}
 
 	return (-1);
+}
+
+std::ostream& operator<<(std::ostream& out, Device& device)
+{
+	VkPhysicalDeviceProperties deviceProperties;
+	vkGetPhysicalDeviceProperties(device.GetPhysicalDevice(), &deviceProperties);
+
+	std::string type = "Unknown";
+	switch (deviceProperties.deviceType)
+	{
+		case VK_PHYSICAL_DEVICE_TYPE_OTHER: type = "Other"; break;
+		case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU: type = "Integrated"; break;
+		case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU: type = "Discrete"; break;
+		case VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU: type = "Virtual"; break;
+		case VK_PHYSICAL_DEVICE_TYPE_CPU: type = "CPU"; break;
+	}
+
+	out << std::endl;
+	out << "Name: " << deviceProperties.deviceName << std::endl;
+	out << "Vendor: " << deviceProperties.vendorID << std::endl;
+	out << "Type: " << type << std::endl;
+	out << "Driver version: " << deviceProperties.driverVersion << std::endl;
+	out << "API version: " << deviceProperties.apiVersion << std::endl;
+
+	return (out);
 }
