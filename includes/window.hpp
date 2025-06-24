@@ -29,10 +29,10 @@ class Window
 		Window();
 		~Window();
 
-		void Create();
+		void CreateFrame();
 		void CreateSurface(Device& device);
 
-		void Destroy();
+		void DestroyFrame();
 		void DestroySurface();
 
 		VkSurfaceKHR& GetSurface();

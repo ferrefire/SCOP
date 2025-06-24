@@ -13,11 +13,11 @@ Window::Window()
 
 Window::~Window()
 {
-	Destroy();
+	DestroyFrame();
 	DestroySurface();
 }
 
-void Window::Create()
+void Window::CreateFrame()
 {
 	if (data) throw (std::runtime_error("Window already exists"));
 
@@ -45,7 +45,7 @@ void Window::CreateSurface(Device& device)
 	config.extent.height = height;
 }
 
-void Window::Destroy()
+void Window::DestroyFrame()
 {
 	if (data)
 	{

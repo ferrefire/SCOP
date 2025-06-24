@@ -38,12 +38,12 @@ void Manager::CreateGLFW()
 
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
-	window.Create();
+	window.CreateFrame();
 }
 
 void Manager::CreateVulkan()
 {
-	Graphics::Create();
+	Graphics::CreateInstance();
 	device.CreatePhysical();
 	window.CreateSurface(device);
 	device.SelectQueues();
@@ -60,7 +60,7 @@ void Manager::Destroy()
 
 void Manager::DestroyGLFW()
 {
-	window.Destroy();
+	window.DestroyFrame();
 	glfwTerminate();
 }
 
@@ -69,7 +69,7 @@ void Manager::DestroyVulkan()
 	Graphics::DestroySwapchain();
 	window.DestroySurface();
 	device.Destroy();
-	Graphics::Destroy();
+	Graphics::DestroyInstance();
 }
 
 Window& Manager::GetWindow()

@@ -13,10 +13,10 @@ Graphics::Graphics()
 
 Graphics::~Graphics()
 {
-	Destroy();
+	DestroyInstance();
 }
 
-void Graphics::Create()
+void Graphics::CreateInstance()
 {
 	if (instance) throw (std::runtime_error("Vulkan instance already exists"));
 
@@ -77,7 +77,7 @@ void Graphics::CreateSwapchain()
 	vkGetSwapchainImagesKHR(device.GetLogicalDevice(), swapchain, &imageCount, swapchainImages.data());
 }
 
-void Graphics::Destroy()
+void Graphics::DestroyInstance()
 {
 	if (instance)
 	{

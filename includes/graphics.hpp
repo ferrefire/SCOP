@@ -21,10 +21,10 @@ class Graphics
 		Graphics();
 		~Graphics();
 
-		static void Create();
+		static void CreateInstance();
 		static void CreateSwapchain();
 
-		static void Destroy();
+		static void DestroyInstance();
 		static void DestroySwapchain();
 
 		static VkInstance& GetInstance();

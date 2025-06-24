@@ -9,17 +9,19 @@ class Manager
 		static Window window;
 		static Device device;
 
+		static void CreateGLFW();
+		static void CreateVulkan();
+
+		static void DestroyGLFW();
+		static void DestroyVulkan();
+
 	public:
 		Manager();
 		~Manager();
 
 		static void Create();
-		static void CreateGLFW();
-		static void CreateVulkan();
-
+		
 		static void Destroy();
-		static void DestroyGLFW();
-		static void DestroyVulkan();
 
 		static Window& GetWindow();
 		static Device& GetDevice();
