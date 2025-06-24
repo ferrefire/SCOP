@@ -9,6 +9,9 @@ class Graphics
 {
 	private:
 		static VkInstance instance;
+		static VkSwapchainKHR swapchain;
+		static std::vector<VkImage> swapchainImages;
+
 		static bool validationLayersEnabled;
 		static std::vector<const char*> validationLayers;
 
@@ -19,8 +22,10 @@ class Graphics
 		~Graphics();
 
 		static void Create();
+		static void CreateSwapchain();
 
 		static void Destroy();
+		static void DestroySwapchain();
 
 		static VkInstance& GetInstance();
 };

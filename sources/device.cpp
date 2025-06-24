@@ -5,6 +5,8 @@
 #include <stdexcept>
 #include <vector>
 #include <set>
+#include <iostream>
+#include <string>
 
 Device::Device()
 {
@@ -18,8 +20,10 @@ Device::~Device()
 
 void Device::Create()
 {
-	DeviceConfig config;
+	DeviceConfig config{};
 	Create(config);
+
+	PrintProperties();
 }
 
 void Device::Create(const DeviceConfig& config)
@@ -84,29 +88,29 @@ void Device::CreateLogical(const DeviceConfig& config)
 
 	for (uint32_t queueFamily : uniqueQueueFamilies)
 	{
-		VkDeviceQueueCreateInfo queueCreateInfo;
-		queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-		queueCreateInfo.queueFamilyIndex = queueFamily;
-		queueCreateInfo.queueCount = 1;
-		queueCreateInfo.pQueuePriorities = &queuePriority;
-		queueCreateInfos.push_back(queueCreateInfo);
+		VkDeviceQueueCreateInfo createInfo{};
+		createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+		createInfo.queueFamilyIndex = queueFamily;
+		createInfo.queueCount = 1;
+		createInfo.pQueuePriorities = &queuePriority;
+		queueCreateInfos.push_back(createInfo);
 	}
 
-	VkPhysicalDeviceFeatures deviceFeatures;
+	VkPhysicalDeviceFeatures deviceFeatures{};
 	if (config.tesselation) deviceFeatures.tessellationShader = VK_TRUE;
 	if (config.anisotropic) deviceFeatures.samplerAnisotropy = VK_TRUE;
 
-	std::vector<const char*> deviceExtensions;
+	std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
-	VkDeviceCreateInfo deviceCreateInfo;
-	deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-	deviceCreateInfo.queueCreateInfoCount = queueCreateInfos.size();
-	deviceCreateInfo.pQueueCreateInfos = queueCreateInfos.data();
-	deviceCreateInfo.pEnabledFeatures = &deviceFeatures;
-	deviceCreateInfo.enabledExtensionCount = 0;
-	deviceCreateInfo.ppEnabledExtensionNames = nullptr;
+	VkDeviceCreateInfo createInfo{};
+	createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+	createInfo.queueCreateInfoCount = queueCreateInfos.size();
+	createInfo.pQueueCreateInfos = queueCreateInfos.data();
+	createInfo.pEnabledFeatures = &deviceFeatures;
+	createInfo.enabledExtensionCount = deviceExtensions.size();
+	createInfo.ppEnabledExtensionNames = deviceExtensions.data();
 
-	if (vkCreateDevice(physicalDevice, &deviceCreateInfo, nullptr, &logicalDevice) != VK_SUCCESS)
+	if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &logicalDevice) != VK_SUCCESS)
 		throw (std::runtime_error("Failed to create logical device"));
 }
 
@@ -128,4 +132,58 @@ void Device::Destroy()
 		physicalDevice = nullptr;
 		queueFamilies = QueueFamilies{};
 	}
+}
+
+VkPhysicalDevice& Device::GetPhysicalDevice()
+{
+	if (!physicalDevice) throw (std::runtime_error("Physical device requested but not yet created"));
+
+	return (physicalDevice);
+}
+
+uint32_t Device::GetQueueIndex(QueueType type)
+{
+	int index = -1;
+
+	switch (type)
+	{
+		case QueueType::Graphics: index = queueFamilies.graphicsFamily;
+		case QueueType::Compute: index = queueFamilies.computeFamily;
+		case QueueType::Present: index = queueFamilies.presentFamily;
+		default: index = -1;
+	}
+
+	if (index == -1) throw (std::runtime_error("Queue index does not exist"));
+
+	return (static_cast<uint32_t>(index));
+}
+
+void Device::PrintProperties()
+{
+	if (!physicalDevice || !logicalDevice)
+	{
+		std::cout << "Device is not complete" << std::endl;
+		return;
+	}
+
+	VkPhysicalDeviceProperties deviceProperties;
+	vkGetPhysicalDeviceProperties(physicalDevice, &deviceProperties);
+
+	std::string type;
+	switch (deviceProperties.deviceType)
+	{
+		case 0: type = "Other";
+		case 1: type = "Integrated";
+		case 2: type = "Discrete";
+		case 3: type = "Virtual";
+		case 4: type = "CPU";
+		default: type = "Unknown";
+	}
+
+	std::cout << "-Device properties-" << std::endl;
+	std::cout << "Name: " << deviceProperties.deviceName << std::endl;
+	std::cout << "Vendor: " << deviceProperties.vendorID << std::endl;
+	std::cout << "Type: " << type << std::endl;
+	std::cout << "Driver version: " << deviceProperties.driverVersion << std::endl;
+	std::cout << "API version: " << deviceProperties.apiVersion << std::endl;
 }

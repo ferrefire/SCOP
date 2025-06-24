@@ -23,6 +23,7 @@ void Manager::Create()
 	try
 	{
 		CreateGLFW();
+		CreateVulkan();
 	}
 	catch(const std::exception& e)
 	{
@@ -44,6 +45,8 @@ void Manager::CreateVulkan()
 {
 	Graphics::Create();
 	device.Create();
+	window.CreateSurface(device);
+	Graphics::CreateSwapchain();
 }
 
 void Manager::Destroy()
@@ -60,8 +63,21 @@ void Manager::DestroyGLFW()
 
 void Manager::DestroyVulkan()
 {
+	Graphics::DestroySwapchain();
+	window.DestroySurface();
 	device.Destroy();
 	Graphics::Destroy();
 }
 
+Window& Manager::GetWindow()
+{
+	return (window);
+}
+
+Device& Manager::GetDevice()
+{
+	return (device);
+}
+
 Window Manager::window;
+Device Manager::device;

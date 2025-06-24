@@ -20,4 +20,7 @@ class Manager
 		static void Destroy();
 		static void DestroyGLFW();
 		static void DestroyVulkan();
+
+		static Window& GetWindow();
+		static Device& GetDevice();
 };

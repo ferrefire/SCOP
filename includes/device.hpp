@@ -3,6 +3,8 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
+enum class QueueType { Graphics, Compute, Present };
+
 struct DeviceConfig
 {
 	bool discrete = false;
@@ -26,7 +28,7 @@ class Device
 	private:
 		VkPhysicalDevice physicalDevice = nullptr;
 		VkDevice logicalDevice = nullptr;
-		QueueFamilies queueFamilies;
+		QueueFamilies queueFamilies{};
 
 		void CreatePhysical(const DeviceConfig& config);
 		void CreateLogical(const DeviceConfig& config);
@@ -40,4 +42,10 @@ class Device
 		void Create(const DeviceConfig& config);
 
 		void Destroy();
+
+		VkPhysicalDevice& GetPhysicalDevice();
+		VkDevice& GetLogicalDevice();
+		uint32_t GetQueueIndex(QueueType type);
+
+		void PrintProperties();
 };
