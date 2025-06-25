@@ -1,9 +1,12 @@
+#!/bin/bash
+
 project=scop
 path=$(pwd)
 dev="-DDEV=OFF"
 release=0
 
-run_command () {
+run_command () 
+{
 	if [[ $1 == "build" ]] || [[ $1 == "bd" ]]; then
 		if ! test -d $path/build; then
 			mkdir build

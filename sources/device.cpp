@@ -164,6 +164,24 @@ uint32_t Device::GetQueueIndex(QueueType type)
 	return (CUI(index));
 }
 
+uint32_t Device::FindMemoryType(uint32_t filter, VkMemoryPropertyFlags properties)
+{
+	if (!physicalDevice) throw (std::runtime_error("Physical device does not exist"));
+
+	VkPhysicalDeviceMemoryProperties memoryProperties{};
+	vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memoryProperties);
+
+	for (uint32_t i = 0; i < memoryProperties.memoryTypeCount; i++)
+	{
+		if ((filter & (1 << i)) && (memoryProperties.memoryTypes[i].propertyFlags & properties) == properties)
+		{
+			return (i);
+		}
+	}
+
+	throw (std::runtime_error("Failed to find a suitable memory type"));
+}
+
 std::vector<DeviceInfo> Device::GetAvailableDevices()
 {
 	uint32_t deviceCount;

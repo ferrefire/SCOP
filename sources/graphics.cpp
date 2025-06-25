@@ -35,8 +35,8 @@ void Graphics::CreateInstance()
 	VkInstanceCreateInfo createInfo{};
 	createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 	createInfo.ppEnabledExtensionNames = glfwGetRequiredInstanceExtensions(&createInfo.enabledExtensionCount);
-	createInfo.enabledLayerCount = validationLayers.size();
-	createInfo.ppEnabledLayerNames = validationLayers.data();
+	createInfo.enabledLayerCount = validationLayersEnabled ? validationLayers.size() : 0;
+	createInfo.ppEnabledLayerNames = validationLayersEnabled ? validationLayers.data() : nullptr;
 
 	if (vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS)
 	{

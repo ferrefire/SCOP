@@ -43,5 +43,49 @@ constexpr std::string_view EnumName(T val)
 	return (map.names[static_cast<int>(val)]);
 }
 
+constexpr int HighestBit(int n)
+{
+	n |= n >> 1;
+	n |= n >> 2;
+	n |= n >> 4;
+	n |= n >> 8;
+	n |= n >> 16;
+
+	n = ((n + 1) >> 1) | (n & (1 << ((sizeof(n) * __CHAR_BIT__) - 1)));
+
+	return (n);
+}
+
+constexpr int BitCount(int n)
+{
+	int count = 0;
+	while (n > 0)
+	{
+		n -= HighestBit(n);
+		count++;
+	}
+	return (count);
+}
+
+template <typename T>
+constexpr std::string_view FlagName(T val)
+{
+	int intVal = static_cast<int>(val);
+	if (intVal == 0) return (EnumName(val));
+	int count = BitCount(intVal);
+	std::string_view results[count];
+	//int highest = HighestBit(intVal);
+	//return (EnumName(static_cast<T>(highest)));
+	for (int i = 0; i < count; i++)
+	{
+		int highest = HighestBit(intVal);
+		results[i] = (EnumName(static_cast<T>(highest)));
+		intVal -= highest;
+	}
+	return (results[0]);
+}
+
 #define VAR_VAL(v) #v << ": " << v
 #define ENUM_VAL(e) #e << ": " << EnumName(e)
+#define FLAG_VAL(f, t) #f << ": " << FlagName(static_cast<t>(f))
+//#define FLAG_VAL(f, t) #f << ": " << EnumName(static_cast<t>(f))

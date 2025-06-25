@@ -1,6 +1,7 @@
 #include "manager.hpp"
 
 #include "graphics.hpp"
+#include "buffer.hpp"
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
@@ -25,6 +26,11 @@ void Manager::Create()
 	{
 		CreateGLFW();
 		CreateVulkan();
+
+		Buffer testBuffer;
+		testBuffer.Create(BufferConfig{false, sizeof(uint32_t)}, &device);
+		std::cout << "Buffer created: " << testBuffer << std::endl;
+		testBuffer.Destroy();
 	}
 	catch(const std::exception& e)
 	{
