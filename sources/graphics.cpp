@@ -1,6 +1,7 @@
 #include "graphics.hpp"
 
 #include "manager.hpp"
+#include "printer.hpp"
 
 #include <stdexcept>
 #include <string>

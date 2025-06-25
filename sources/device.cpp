@@ -3,6 +3,7 @@
 #include "graphics.hpp"
 #include "utilities.hpp"
 #include "manager.hpp"
+#include "printer.hpp"
 
 #include <stdexcept>
 #include <vector>
@@ -225,22 +226,12 @@ std::ostream& operator<<(std::ostream& out, Device& device)
 	VkPhysicalDeviceProperties deviceProperties;
 	vkGetPhysicalDeviceProperties(device.GetPhysicalDevice(), &deviceProperties);
 
-	std::string type = "Unknown";
-	switch (deviceProperties.deviceType)
-	{
-		case VK_PHYSICAL_DEVICE_TYPE_OTHER: type = "Other"; break;
-		case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU: type = "Integrated"; break;
-		case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU: type = "Discrete"; break;
-		case VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU: type = "Virtual"; break;
-		case VK_PHYSICAL_DEVICE_TYPE_CPU: type = "CPU"; break;
-	}
-
 	out << std::endl;
-	out << "Name: " << deviceProperties.deviceName << std::endl;
-	out << "Vendor: " << deviceProperties.vendorID << std::endl;
-	out << "Type: " << type << std::endl;
-	out << "Driver version: " << deviceProperties.driverVersion << std::endl;
-	out << "API version: " << deviceProperties.apiVersion << std::endl;
+	out << VAR_VAL(deviceProperties.deviceName) << std::endl;
+	out << VAR_VAL(deviceProperties.vendorID) << std::endl;
+	out << ENUM_VAL(deviceProperties.deviceType) << std::endl;
+	out << VAR_VAL(deviceProperties.driverVersion) << std::endl;
+	out << VAR_VAL(deviceProperties.apiVersion) << std::endl;
 
 	return (out);
 }

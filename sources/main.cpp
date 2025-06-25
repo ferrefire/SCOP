@@ -14,6 +14,10 @@ int main(int argc, char **argv)
 	catch(const std::exception& e)
 	{
 		std::cerr << "Failed at creation: " << e.what() << std::endl;
+
+		Manager::Destroy();
+
+		exit(EXIT_FAILURE);
 	}
 
 	while (!Manager::ShouldClose())
@@ -25,5 +29,5 @@ int main(int argc, char **argv)
 
 	std::cout << "Program ended" << std::endl << std::endl;
 
-	return (0);
+	exit(EXIT_SUCCESS);
 }

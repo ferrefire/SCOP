@@ -2,6 +2,7 @@
 
 #include "graphics.hpp"
 #include "utilities.hpp"
+#include "printer.hpp"
 
 #include <stdexcept>
 #include <iostream>
@@ -140,9 +141,19 @@ std::ostream& operator<<(std::ostream& out, Window& window)
 	WindowConfig config = window.GetConfig();
 
 	out << std::endl;
-	out << "Width: " << config.extent.width << std::endl;
-	out << "Height: " << config.extent.height << std::endl;
+	out << VAR_VAL(config.extent.width) << std::endl;
+	out << VAR_VAL(config.extent.height) << std::endl;
+	out << ENUM_VAL(config.format.format) << std::endl;
+	out << ENUM_VAL(config.format.colorSpace) << std::endl;
+	out << ENUM_VAL(config.presentMode) << std::endl;
+	out << VAR_VAL(config.capabilities.minImageCount) << std::endl;
+	out << VAR_VAL(config.capabilities.maxImageCount) << std::endl;
+	//out << NAME_VAL(config.format) << std::endl;
+	//out << "Width: " << config.extent.width << std::endl;
+	//out << "Height: " << config.extent.height << std::endl;
 	//out << "Format: " << EnumName(config.format.format) << std::endl;
+	//out << "Color space: " << EnumName<VkColorSpaceKHR, 1>(config.format.colorSpace) << std::endl;
+	//out << "Present mode: " << EnumName<VkPresentModeKHR, 10>(config.presentMode) << std::endl;
 	
 	return (out);
 }
