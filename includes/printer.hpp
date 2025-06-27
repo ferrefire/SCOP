@@ -4,9 +4,13 @@
 #include <typeinfo>
 
 #if defined(__clang__) || defined(__GNUC__)
-#	define PRETTY __PRETTY_FUNCTION__
+#	define PRETTY_FUN __PRETTY_FUNCTION__
+#	define PRETTY_KEY "T = "
+#	define PRETTY_END "];>"
 #elif defined(_MSC_VER)
-#	define PRETTY __FUNCSIG__
+#	define PRETTY_FUN __FUNCSIG__
+#	define PRETTY_KEY "StringName<"
+#	define PRETTY_SLOT ">"
 #else
 #	error Unsupported compiler
 #endif
@@ -14,10 +18,12 @@
 template <auto T>
 constexpr std::string_view StringName()
 {
-	constexpr std::string_view stringLiteral = PRETTY;
-	constexpr std::string_view key = "T = ";
+	constexpr std::string_view stringLiteral = PRETTY_FUN;	
+	constexpr std::string_view key = PRETTY_KEY;
+	constexpr std::string_view slot = PRETTY_SLOT;
+
 	const std::size_t start = stringLiteral.find(key) + key.size();
-	const std::size_t end = stringLiteral.find_first_of("];>", start);
+	const std::size_t end = stringLiteral.find_first_of(slot, start);
 	
 	return (stringLiteral.substr(start, end - start));
 }
@@ -51,7 +57,7 @@ constexpr int HighestBit(int n)
 	n |= n >> 8;
 	n |= n >> 16;
 
-	n = ((n + 1) >> 1) | (n & (1 << ((sizeof(n) * __CHAR_BIT__) - 1)));
+	n = ((n + 1) >> 1) | (n & (1 << ((sizeof(n) * 8) - 1)));
 
 	return (n);
 }
@@ -72,20 +78,21 @@ constexpr std::string_view FlagName(T val)
 {
 	int intVal = static_cast<int>(val);
 	if (intVal == 0) return (EnumName(val));
-	int count = BitCount(intVal);
-	std::string_view results[count];
+	int baseCount = BitCount(intVal);
+	//std::string_view results[baseCount];
+
 	//int highest = HighestBit(intVal);
-	//return (EnumName(static_cast<T>(highest)));
-	for (int i = 0; i < count; i++)
-	{
-		int highest = HighestBit(intVal);
-		results[i] = (EnumName(static_cast<T>(highest)));
-		intVal -= highest;
-	}
-	return (results[0]);
+	return (EnumName(static_cast<T>(HighestBit(intVal))));
+
+	//for (int i = 0; i < baseCount; i++)
+	//{
+	//	int highest = HighestBit(intVal);
+	//	results[i] = (EnumName(static_cast<T>(highest)));
+	//	intVal -= highest;
+	//}
+	//return (results[0]);
 }
 
 #define VAR_VAL(v) #v << ": " << v
 #define ENUM_VAL(e) #e << ": " << EnumName(e)
 #define FLAG_VAL(f, t) #f << ": " << FlagName(static_cast<t>(f))
-//#define FLAG_VAL(f, t) #f << ": " << EnumName(static_cast<t>(f))
