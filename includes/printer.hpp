@@ -6,7 +6,7 @@
 #if defined(__clang__) || defined(__GNUC__)
 #	define PRETTY_FUN __PRETTY_FUNCTION__
 #	define PRETTY_KEY "T = "
-#	define PRETTY_END "];>"
+#	define PRETTY_SLOT "];>"
 #elif defined(_MSC_VER)
 #	define PRETTY_FUN __FUNCSIG__
 #	define PRETTY_KEY "StringName<"
