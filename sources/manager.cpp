@@ -26,14 +26,6 @@ void Manager::Create()
 	{
 		CreateGLFW();
 		CreateVulkan();
-
-		std::vector<DescriptorConfig> config(1);
-		config[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		config[0].stages = VK_SHADER_STAGE_VERTEX_BIT;
-		Descriptor descriptor;
-		descriptor.Create(config, &device);
-		std::cout << "Descriptor created: " << descriptor << std::endl;
-		descriptor.Destroy();
 	}
 	catch(const std::exception& e)
 	{
