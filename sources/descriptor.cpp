@@ -14,7 +14,7 @@ Descriptor::~Descriptor()
 	Destroy();
 }
 
-void Descriptor::Create(std::vector<DescriptorConfig> descriptorConfig, Device* descriptorDevice)
+void Descriptor::Create(const std::vector<DescriptorConfig>& descriptorConfig, Device* descriptorDevice)
 {
 	config = descriptorConfig;
 	device = descriptorDevice;

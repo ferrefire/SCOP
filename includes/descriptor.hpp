@@ -34,7 +34,7 @@ class Descriptor
         Descriptor();
         ~Descriptor();
 
-		void Create(std::vector<DescriptorConfig> descriptorConfig, Device* descriptorDevice);
+		void Create(const std::vector<DescriptorConfig>& descriptorConfig, Device* descriptorDevice);
 
 		void Destroy();
 

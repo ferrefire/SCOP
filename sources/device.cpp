@@ -20,7 +20,7 @@ Device::~Device()
 	Destroy();
 }
 
-void Device::SetConfig(DeviceConfig deviceConfig)
+void Device::SetConfig(const DeviceConfig& deviceConfig)
 {
 	config = deviceConfig;
 }

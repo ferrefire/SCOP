@@ -46,16 +46,17 @@ struct DeviceInfo
 class Device
 {
 	private:
+		DeviceConfig config{};
+
 		VkPhysicalDevice physicalDevice = nullptr;
 		VkDevice logicalDevice = nullptr;
 		QueueFamilies queueFamilies{};
-		DeviceConfig config{};
-
+		
 	public:
 		Device();
 		~Device();
 
-		void SetConfig(DeviceConfig deviceConfig);
+		void SetConfig(const DeviceConfig& deviceConfig);
 		void CreatePhysical();
 		void CreateLogical();
 		void SelectQueues();

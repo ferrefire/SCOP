@@ -7,13 +7,22 @@
 
 #include <vector>
 
+struct AttachmentConfig
+{
+	VkImageView view = nullptr;
+	VkAttachmentDescription description{};
+	VkAttachmentReference reference{};
+};
+
 struct PassConfig
 {
-	std::vector<VkAttachmentDescription> colorAttachments;
-	std::vector<VkAttachmentReference> colorReferences;
-	std::vector<VkAttachmentDescription> depthAttachments;
-	std::vector<VkAttachmentReference> depthReferences;
+	std::vector<AttachmentConfig> colorAttachments;
+	AttachmentConfig depthAttachment{};
 	std::vector<VkSubpassDescription> subpasses;
+
+	std::vector<VkAttachmentReference> GetColorReferences(); 
+	std::vector<VkAttachmentDescription> GetAttachments();
+	std::vector<VkImageView> GetViews();
 };
 
 class Pass
@@ -32,7 +41,7 @@ class Pass
 		Pass();
 		~Pass();
 
-		void Create(PassConfig config, Device* device);
+		void Create(const PassConfig& passConfig, Device* passDevice);
 
 		void Destroy();
 

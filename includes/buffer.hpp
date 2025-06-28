@@ -33,7 +33,7 @@ class Buffer
 		Buffer();
 		~Buffer();
 
-		void Create(BufferConfig bufferConfig, Device* bufferDevice);
+		void Create(const BufferConfig& bufferConfig, Device* bufferDevice);
 
 		void Destroy();
 

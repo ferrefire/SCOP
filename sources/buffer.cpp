@@ -14,7 +14,7 @@ Buffer::~Buffer()
 	Destroy();
 }
 
-void Buffer::Create(BufferConfig bufferConfig, Device* bufferDevice)
+void Buffer::Create(const BufferConfig& bufferConfig, Device* bufferDevice)
 {
 	config = bufferConfig;
 	device = bufferDevice;
