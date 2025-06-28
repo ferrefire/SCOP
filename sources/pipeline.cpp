@@ -1,5 +1,6 @@
 #include "pipeline.hpp"
 
+#include "manager.hpp"
 #include "utilities.hpp"
 
 #include <stdexcept>
@@ -15,10 +16,12 @@ Pipeline::~Pipeline()
 
 }
 
-void Pipeline::Create(const PipelineConfig& pipelineConfig, Device* pipelineDevice)
+void Pipeline::Create(const PipelineConfig& pipelineConfig, Device* pipelineDevice = nullptr)
 {
 	config = pipelineConfig;
 	device = pipelineDevice;
+
+	if (!device) device = &Manager::GetDevice();
 
 	std::string path = Utilities::GetPath();
 

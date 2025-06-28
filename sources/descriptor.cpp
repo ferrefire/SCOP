@@ -1,5 +1,6 @@
 #include "descriptor.hpp"
 
+#include "manager.hpp"
 #include "printer.hpp"
 
 #include <stdexcept>
@@ -14,10 +15,12 @@ Descriptor::~Descriptor()
 	Destroy();
 }
 
-void Descriptor::Create(const std::vector<DescriptorConfig>& descriptorConfig, Device* descriptorDevice)
+void Descriptor::Create(const std::vector<DescriptorConfig>& descriptorConfig, Device* descriptorDevice = nullptr)
 {
 	config = descriptorConfig;
 	device = descriptorDevice;
+
+	if (!device) device = &Manager::GetDevice();
 
 	CreateLayout();
 	CreatePool();

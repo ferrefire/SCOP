@@ -143,6 +143,7 @@ bool Graphics::HasValidationLayers()
 VkInstance Graphics::instance = nullptr;
 VkSwapchainKHR Graphics::swapchain = nullptr;
 std::vector<VkImage> Graphics::swapchainImages;
+std::vector<VkImageView> Graphics::swapchainViews;
 
 bool Graphics::validationLayersEnabled = false;
 std::vector<const char*> Graphics::validationLayers = {"VK_LAYER_KHRONOS_validation"};

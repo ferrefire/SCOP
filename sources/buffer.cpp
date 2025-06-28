@@ -1,5 +1,6 @@
 #include "buffer.hpp"
 
+#include "manager.hpp"
 #include "printer.hpp"
 
 #include <stdexcept>
@@ -14,10 +15,12 @@ Buffer::~Buffer()
 	Destroy();
 }
 
-void Buffer::Create(const BufferConfig& bufferConfig, Device* bufferDevice)
+void Buffer::Create(const BufferConfig& bufferConfig, Device* bufferDevice = nullptr)
 {
 	config = bufferConfig;
 	device = bufferDevice;
+
+	if (!device) device = &Manager::GetDevice();
 
 	CreateBuffer();
 	AllocateMemory();

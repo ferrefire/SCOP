@@ -1,5 +1,6 @@
 #include "pass.hpp"
 
+#include "manager.hpp"
 #include "graphics.hpp"
 
 #include <stdexcept>
@@ -45,10 +46,12 @@ Pass::~Pass()
 	Destroy();
 }
 
-void Pass::Create(const PassConfig& passConfig, Device* passDevice)
+void Pass::Create(const PassConfig& passConfig, Device* passDevice = nullptr)
 {
 	config = passConfig;
 	device = passDevice;
+
+	if (!device) device = &Manager::GetDevice();
 
 	CreateRenderPass();
 	CreateFramebuffers();
