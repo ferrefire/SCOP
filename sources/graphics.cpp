@@ -108,6 +108,11 @@ VkInstance& Graphics::GetInstance()
 	return (instance);
 }
 
+std::vector<VkImageView>& Graphics::GetSwapchainViews()
+{
+	return (swapchainViews);
+}
+
 bool Graphics::HasValidationLayers()
 {
 	uint32_t layerCount;

@@ -11,6 +11,7 @@ class Graphics
 		static VkInstance instance;
 		static VkSwapchainKHR swapchain;
 		static std::vector<VkImage> swapchainImages;
+		static std::vector<VkImageView> swapchainViews;
 
 		static bool validationLayersEnabled;
 		static std::vector<const char*> validationLayers;
@@ -28,4 +29,5 @@ class Graphics
 		static void DestroySwapchain();
 
 		static VkInstance& GetInstance();
+		static std::vector<VkImageView>& GetSwapchainViews();
 };
