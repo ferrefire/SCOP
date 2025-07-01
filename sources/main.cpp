@@ -4,56 +4,42 @@
 
 #include <iostream>
 #include <exception>
+#include <string>
 
 int main(int argc, char **argv)
 {
 	std::cout << "Program started" << std::endl << std::endl;
 
-	Point<int, 3> point;
-	std::cout << point << std::endl;
-	point[0] = 3;
-	std::cout << point << std::endl;
-	point[1] = 10;
-	point[2] = 55;
-	std::cout << point << std::endl;
-	point[2] /= 2;
-	std::cout << point << std::endl;
+	point3D p1({1, 2, 3});
+	std::cout << p1 << std::endl;
+	point3D p2({0, 1, 2});
+	std::cout << p2 << std::endl;
+	p1 += p2;
+	std::cout << p1 << std::endl;
+	point3D p3(2);
+	std::cout << p3 << std::endl;
+	p1 *= p3;
+	std::cout << p1 << std::endl;
+	p1 /= point3D(3);
+	std::cout << p1 << std::endl;
+	point3D p4 = (p1 + p2);
+	std::cout << p4 << std::endl;
+	p4.x += 10;
+	std::cout << p4 << std::endl;
+	std::cout << p1 << std::endl;
+	std::cout << (p1 + p2) << std::endl;
+	point3D p5(100);
+	std::cout << p5 << std::endl;
+	p5 = p1;
+	std::cout << p5 << std::endl;
+	point3D p6(p2);
+	std::cout << p6 << std::endl;
 
-	std::cout << std::endl;
+	point2D p2d(50);
+	std::cout << p2d << std::endl;
 
-	Point<float, 3> fpoint;
-	std::cout << fpoint << std::endl;
-	fpoint[0] = 3.0f;
-	std::cout << fpoint << std::endl;
-	fpoint[1] = 10.0f;
-	fpoint[2] = 55.0f;
-	std::cout << fpoint << std::endl;
-	fpoint[2] /= 2;
-	std::cout << fpoint << std::endl;
-
-	std::cout << std::endl;
-
-	Point<double, 3> dpoint;
-	std::cout << dpoint << std::endl;
-	dpoint[0] = 3.0;
-	std::cout << dpoint << std::endl;
-	dpoint[1] = 10.0;
-	dpoint[2] = 55.0;
-	std::cout << dpoint << std::endl;
-	dpoint[2] /= 2;
-	std::cout << dpoint << std::endl;
-
-	std::cout << std::endl;
-
-	point3D initPoint({1, 2, 3});
-	std::cout << initPoint << std::endl;
-	initPoint.x = 5;
-	std::cout << initPoint << std::endl;
-
-	std::cout << std::endl;
-
-	//Point<float, 3> initArrPoint();
-	//std::cout << initPoint << std::endl;
+	point4D p4d({1234, 5678, 9101112, 13141516});
+	std::cout << p4d << std::endl;
 
 	exit(EXIT_SUCCESS);
 
