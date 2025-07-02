@@ -1,7 +1,6 @@
 #include "pass.hpp"
 
 #include "manager.hpp"
-#include "graphics.hpp"
 #include "utilities.hpp"
 
 #include <stdexcept>
@@ -82,12 +81,9 @@ void Pass::CreateFramebuffers()
 	if (!renderpass) throw (std::runtime_error("Render pass does not exist yet"));
 	if (!device) throw (std::runtime_error("Pass has no device"));
 
-	std::vector<VkImageView>& swapchainViews = Graphics::GetSwapchainViews();
+	const std::vector<VkImageView>& swapchainViews = Manager::GetSwapchain().GetViews();
 
-	if (swapchainViews.size() == 0) throw (std::runtime_error("Swapchain has no views"));
-
-	framebuffers.resize(Graphics::GetSwapchainViews().size());
-
+	framebuffers.resize(swapchainViews.size());
 	for (int i = 0; i < swapchainViews.size(); i++)
 	{
 		std::vector<VkImageView> views = config.GetViews();

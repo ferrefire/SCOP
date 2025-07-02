@@ -47,42 +47,6 @@ void Graphics::CreateInstance()
 	std::cout << "Vulkan instance created" << std::endl << std::endl;
 }
 
-void Graphics::CreateSwapchain()
-{
-	if (swapchain) throw (std::runtime_error("Vulkan swapchain already exists"));
-
-	Window& window = Manager::GetWindow();
-	Device& device = Manager::GetDevice();
-
-	WindowConfig windowConfig = window.GetConfig();
-
-	VkSwapchainCreateInfoKHR createInfo{};
-	createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-	createInfo.surface = window.GetSurface();
-	createInfo.minImageCount = windowConfig.capabilities.minImageCount;
-	createInfo.imageFormat = windowConfig.format.format;
-	createInfo.imageColorSpace = windowConfig.format.colorSpace;
-	createInfo.imageExtent = windowConfig.extent;
-	createInfo.imageArrayLayers = 1;
-	createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
-	createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
-	createInfo.preTransform = windowConfig.capabilities.currentTransform;
-	createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
-	createInfo.presentMode = windowConfig.presentMode;
-	createInfo.clipped = VK_TRUE;
-	createInfo.oldSwapchain = nullptr;
-
-	if (vkCreateSwapchainKHR(device.GetLogicalDevice(), &createInfo, nullptr, &swapchain) != VK_SUCCESS)
-		throw (std::runtime_error("Failed to create Vulkan swapchain"));
-
-	uint32_t imageCount = 0;
-	vkGetSwapchainImagesKHR(device.GetLogicalDevice(), swapchain, &imageCount, nullptr);
-	swapchainImages.resize(imageCount);
-	vkGetSwapchainImagesKHR(device.GetLogicalDevice(), swapchain, &imageCount, swapchainImages.data());
-
-	std::cout << "Vulkan swapchain created" << std::endl << std::endl;
-}
-
 void Graphics::DestroyInstance()
 {
 	if (instance)
@@ -92,26 +56,11 @@ void Graphics::DestroyInstance()
 	}
 }
 
-void Graphics::DestroySwapchain()
-{
-	if (swapchain)
-	{
-		vkDestroySwapchainKHR(Manager::GetDevice().GetLogicalDevice(), swapchain, nullptr);
-		swapchain = nullptr;
-		swapchainImages.clear();
-	}
-}
-
 VkInstance& Graphics::GetInstance()
 {
 	if (!instance) throw (std::runtime_error("Instance requested but not yet created"));
 
 	return (instance);
-}
-
-std::vector<VkImageView>& Graphics::GetSwapchainViews()
-{
-	return (swapchainViews);
 }
 
 bool Graphics::HasValidationLayers()
@@ -142,9 +91,6 @@ bool Graphics::HasValidationLayers()
 }
 
 VkInstance Graphics::instance = nullptr;
-VkSwapchainKHR Graphics::swapchain = nullptr;
-std::vector<VkImage> Graphics::swapchainImages;
-std::vector<VkImageView> Graphics::swapchainViews;
 
 bool Graphics::validationLayersEnabled = false;
 std::vector<const char*> Graphics::validationLayers = {"VK_LAYER_KHRONOS_validation"};

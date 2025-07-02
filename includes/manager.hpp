@@ -2,12 +2,14 @@
 
 #include "window.hpp"
 #include "device.hpp"
+#include "swapchain.hpp"
 
 class Manager
 {
 	private:
 		static Window window;
 		static Device device;
+		static Swapchain swapchain;
 
 		static void CreateGLFW();
 		static void CreateVulkan();
@@ -25,6 +27,7 @@ class Manager
 
 		static Window& GetWindow();
 		static Device& GetDevice();
+		static Swapchain& GetSwapchain();
 
 		static void Frame();
 		

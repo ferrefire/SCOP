@@ -52,7 +52,7 @@ void Manager::CreateVulkan()
 	device.CreateLogical();
 	device.RetrieveQueues();
 	std::cout << "Device created: " << device << std::endl;
-	Graphics::CreateSwapchain();
+	swapchain.Create(&window, &device);
 }
 
 void Manager::Destroy()
@@ -69,7 +69,7 @@ void Manager::DestroyGLFW()
 
 void Manager::DestroyVulkan()
 {
-	Graphics::DestroySwapchain();
+	swapchain.Destroy();
 	window.DestroySurface();
 	device.Destroy();
 	Graphics::DestroyInstance();
@@ -85,6 +85,11 @@ Device& Manager::GetDevice()
 	return (device);
 }
 
+Swapchain& Manager::GetSwapchain()
+{
+	return (swapchain);
+}
+
 void Manager::Frame()
 {
 	glfwPollEvents();
@@ -97,3 +102,4 @@ bool Manager::ShouldClose()
 
 Window Manager::window;
 Device Manager::device;
+Swapchain Manager::swapchain;
