@@ -18,7 +18,7 @@ concept ValidRange = (S >= 1 && S <= 4);
 TEMPLATE
 class Point
 {
-	protected:
+	private:
 		std::array<T, S> data{};
 
 	public:
@@ -28,10 +28,15 @@ class Point
 		Point<T, S>& operator=(const Point<T, S>& other);
 		~Point();
 
-		T& x = data[0];
-		T& y = data[1];
-		T& z = (S > 2 ? data[2] : data[data.size() - 1]);
-		T& w = (S > 3 ? data[3] : data[data.size() - 1]);
+		T& x() {return (data[0]);}
+		T& y() {return (S > 1 ? data[1] : data[data.size() - 1]);}
+		T& z() {return (S > 2 ? data[2] : data[data.size() - 1]);}
+		T& w() {return (S > 3 ? data[3] : data[data.size() - 1]);}
+
+		const T& x() const {return (data[0]);}
+		const T& y() const {return (S > 1 ? data[1] : data[data.size() - 1]);}
+		const T& z() const {return (S > 2 ? data[2] : data[data.size() - 1]);}
+		const T& w() const {return (S > 3 ? data[3] : data[data.size() - 1]);}
 
 		T& operator[](const uint32_t i);
 		Point<T, S> operator+(Point<T, S> other);

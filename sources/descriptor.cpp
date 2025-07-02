@@ -2,6 +2,7 @@
 
 #include "manager.hpp"
 #include "printer.hpp"
+#include "utilities.hpp"
 
 #include <stdexcept>
 
@@ -43,7 +44,7 @@ void Descriptor::CreateLayout()
 
 	VkDescriptorSetLayoutCreateInfo createInfo{};
 	createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-	createInfo.bindingCount = config.size();
+	createInfo.bindingCount = CUI(config.size());
 	createInfo.pBindings = layoutBindings.data();
 
 	if (vkCreateDescriptorSetLayout(device->GetLogicalDevice(), &createInfo, nullptr, &layout) != VK_SUCCESS)
@@ -64,7 +65,7 @@ void Descriptor::CreatePool()
 
 	VkDescriptorPoolCreateInfo createInfo{};
 	createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-	createInfo.poolSizeCount = poolSizes.size();
+	createInfo.poolSizeCount = CUI(poolSizes.size());
 	createInfo.pPoolSizes = poolSizes.data();
 	createInfo.maxSets = 1;
 

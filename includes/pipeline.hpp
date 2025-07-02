@@ -1,6 +1,7 @@
 #pragma once
 
 #include "device.hpp"
+#include "mesh.hpp"
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
@@ -9,18 +10,26 @@
 
 struct PipelineConfig
 {
-	VkPipelineViewportStateCreateInfo viewportState{};
+	std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
+	VkPipelineVertexInputStateCreateInfo vertexInput{};
     VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
+	VkPipelineTessellationStateCreateInfo tesselation{};
+	VkPipelineViewportStateCreateInfo viewportState{};
     VkPipelineRasterizationStateCreateInfo rasterization{};
     VkPipelineMultisampleStateCreateInfo multisampling{};
+	VkPipelineDepthStencilStateCreateInfo depthStencil{};
     VkPipelineColorBlendAttachmentState colorBlendAttachment{};
     VkPipelineColorBlendStateCreateInfo colorBlending{};
-    VkPipelineDepthStencilStateCreateInfo depthStencil{};
+	VkPipelineDynamicStateCreateInfo dynamics{};
 
 	std::string shader = "";
-
+	VertexInfo vertexInfo{};
+	std::vector<VkDescriptorSetLayout> descriptorLayouts;
 	VkRenderPass renderpass = nullptr;
 	uint32_t subpass = 0;
+	std::vector<VkDynamicState> dynamicStates;
+	VkViewport viewport{};
+	VkRect2D scissor{};
 };
 
 class Pipeline
@@ -30,9 +39,12 @@ class Pipeline
 		Device* device = nullptr;
 
 		VkPipelineLayout layout = nullptr;
+		VkPipeline pipeline = nullptr;
 
 		VkShaderModule CreateShader(const std::vector<char>& code);
+		void CreateConfig();
 		void CreateLayout();
+		void CreatePipeline();
 
 	public:
 		Pipeline();

@@ -2,6 +2,7 @@
 
 #include "manager.hpp"
 #include "graphics.hpp"
+#include "utilities.hpp"
 
 #include <stdexcept>
 
@@ -66,9 +67,9 @@ void Pass::CreateRenderPass()
 
 	VkRenderPassCreateInfo createInfo{};
 	createInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-	createInfo.attachmentCount = attachments.size();
+	createInfo.attachmentCount = CUI(attachments.size());
 	createInfo.pAttachments = attachments.data();
-	createInfo.subpassCount = config.subpasses.size();
+	createInfo.subpassCount = CUI(config.subpasses.size());
 	createInfo.pSubpasses = config.subpasses.data();
 
 	if (vkCreateRenderPass(device->GetLogicalDevice(), &createInfo, nullptr, &renderpass) != VK_SUCCESS)
@@ -95,7 +96,7 @@ void Pass::CreateFramebuffers()
 		VkFramebufferCreateInfo createInfo{};
 		createInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
 		createInfo.renderPass = renderpass;
-		createInfo.attachmentCount = views.size();
+		createInfo.attachmentCount = CUI(views.size());
 		createInfo.pAttachments = views.data();
 		createInfo.width = 400;
 		createInfo.height = 400;

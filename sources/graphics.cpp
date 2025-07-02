@@ -2,6 +2,7 @@
 
 #include "manager.hpp"
 #include "printer.hpp"
+#include "utilities.hpp"
 
 #include <stdexcept>
 #include <string>
@@ -35,7 +36,7 @@ void Graphics::CreateInstance()
 	VkInstanceCreateInfo createInfo{};
 	createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 	createInfo.ppEnabledExtensionNames = glfwGetRequiredInstanceExtensions(&createInfo.enabledExtensionCount);
-	createInfo.enabledLayerCount = validationLayersEnabled ? validationLayers.size() : 0;
+	createInfo.enabledLayerCount = validationLayersEnabled ? CUI(validationLayers.size()) : 0;
 	createInfo.ppEnabledLayerNames = validationLayersEnabled ? validationLayers.data() : nullptr;
 
 	if (vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS)

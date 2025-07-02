@@ -15,4 +15,9 @@ class Utilities
 	public:
 		static std::string GetPath();
 		static std::vector<char> FileToBinary(std::string path);
+		
+		template <typename T>
+		static bool Contains(const std::vector<T>& vector, T target);
 };
+
+#include "utilities.tpp"
