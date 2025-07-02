@@ -7,6 +7,8 @@
 #include "mesh.hpp"
 #include "buffer.hpp"
 #include "pass.hpp"
+#include "bitmask.hpp"
+#include "command.hpp"
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
@@ -113,6 +115,11 @@ void Manager::Start()
 	//config.vertexInfo = Mesh::GetVertexInfo(true, false, false, false);
 	//config.renderpass = pass.GetRenderpass();
 	//pipeline.Create(config, &device);
+
+	//Command command;
+	//CommandConfig commandConfig{};
+	//commandConfig.queueIndex = device.GetQueueIndex(QueueType::Graphics);
+	//command.Create(commandConfig, &device);
 }
 
 void Manager::Frame()

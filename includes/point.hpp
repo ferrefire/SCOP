@@ -6,7 +6,7 @@
 #include <stdexcept>
 #include <array>
 
-#define TEMPLATE template <ValidType T, uint32_t S> \
+#define POINT_TEMPLATE template <ValidType T, uint32_t S> \
 	requires ValidRange<S>
 
 template <typename T>
@@ -15,7 +15,7 @@ concept ValidType = (std::is_floating_point<T>().value || std::is_integral<T>().
 template <uint32_t S>
 concept ValidRange = (S >= 1 && S <= 4);
 
-TEMPLATE
+POINT_TEMPLATE
 class Point
 {
 	private:
@@ -49,10 +49,10 @@ class Point
 		void operator/=(Point<T, S> other);
 };
 
-//TEMPLATE
+//POINT_TEMPLATE
 //std::ostream& operator<<(std::ostream& out, Point<T, S>& point);
 
-TEMPLATE
+POINT_TEMPLATE
 std::ostream& operator<<(std::ostream& out, Point<T, S> point);
 
 #include "point.tpp"

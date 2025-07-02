@@ -1,5 +1,16 @@
 #include "mesh.hpp"
 
+Mesh::Mesh()
+{
+	//indices = std::vector<uint16_t>(10);
+	//std::get<std::vector<uint16_t>>(indices)
+}
+
+Mesh::~Mesh()
+{
+
+}
+
 VertexInfo Mesh::GetVertexInfo(bool position, bool coordinate, bool normal, bool color)
 {
 	VertexInfo vertexInfo{};

@@ -2,26 +2,23 @@
 
 #include "buffer.hpp"
 #include "point.hpp"
+#include "device.hpp"
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
-enum class VertexConfig 
+#include <vector>
+#include <variant>
+
+typedef enum VertexConfigBits
 {
 	None = 0,
 	Position = 1 << 0,
 	Coordinate = 1 << 1,
 	Normal = 1 << 2,
 	Color = 1 << 3,
-};
-
-struct MeshConfig
-{
-	bool positions = true;
-	bool coordinates = false;
-	bool normals = false;
-	bool colors = false;
-};
+} VertexConfigBits;
+typedef uint32_t VertexConfig;
 
 struct VertexInfo
 {
@@ -32,10 +29,24 @@ struct VertexInfo
 	std::vector<VkVertexInputAttributeDescription> attributeDescriptions;
 };
 
+struct MeshConfig
+{
+	VertexConfig vertexConfig = Position;
+	VkIndexType indexType = VK_INDEX_TYPE_UINT16;
+};
+
+//#define MESH_TEMPLATE template <VertexConfig V, VkIndexType I>
+
+//MESH_TEMPLATE
 class Mesh
 {
 	private:
 		MeshConfig config{};
+		Device* device = nullptr;
+
+		std::vector<float> vertices;
+		//std::vector<uint16_t> indices;
+		//std::variant<std::vector<uint16_t>, std::vector<uint32_t>> indices;
 
 		Buffer vertexBuffer;
 		Buffer indexBuffer;
@@ -44,7 +55,7 @@ class Mesh
 		Mesh();
 		~Mesh();
 
-		void Create(const MeshConfig& meshConfig);
+		void Create();
 
 		void Destroy();
 

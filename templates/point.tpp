@@ -2,13 +2,13 @@
 
 #include <stdexcept>
 
-TEMPLATE
+POINT_TEMPLATE
 Point<T, S>::Point()
 {
 	
 }
 
-TEMPLATE
+POINT_TEMPLATE
 Point<T, S>::Point(const T init)
 {
 	for (int i = 0; i < S; i++)
@@ -17,7 +17,7 @@ Point<T, S>::Point(const T init)
 	}
 }
 
-TEMPLATE
+POINT_TEMPLATE
 Point<T, S>::Point(std::initializer_list<T> init)
 {
 	if (init.size() > S) throw (std::out_of_range("Too many initializers"));
@@ -30,20 +30,20 @@ Point<T, S>::Point(std::initializer_list<T> init)
 	}
 }
 
-TEMPLATE
+POINT_TEMPLATE
 Point<T, S>& Point<T, S>::operator=(const Point<T, S>& other)
 {
 	this->data = other.data;
 	return (*this);
 }
 
-TEMPLATE
+POINT_TEMPLATE
 Point<T, S>::~Point()
 {
 	
 }
 
-TEMPLATE
+POINT_TEMPLATE
 T& Point<T, S>::operator[](const uint32_t i)
 {
 	if (i >= S) throw (std::out_of_range("Index out of bounds"));
@@ -51,7 +51,7 @@ T& Point<T, S>::operator[](const uint32_t i)
 	return (data[i]);
 }
 
-TEMPLATE
+POINT_TEMPLATE
 Point<T, S> Point<T, S>::operator+(Point<T, S> other)
 {
 	Point<T, S> result;
@@ -61,7 +61,7 @@ Point<T, S> Point<T, S>::operator+(Point<T, S> other)
 	return (result);
 }
 
-TEMPLATE
+POINT_TEMPLATE
 Point<T, S> Point<T, S>::operator-(Point<T, S> other)
 {
 	Point<T, S> result;
@@ -71,7 +71,7 @@ Point<T, S> Point<T, S>::operator-(Point<T, S> other)
 	return (result);
 }
 
-TEMPLATE
+POINT_TEMPLATE
 Point<T, S> Point<T, S>::operator*(Point<T, S> other)
 {
 	Point<T, S> result;
@@ -81,7 +81,7 @@ Point<T, S> Point<T, S>::operator*(Point<T, S> other)
 	return (result);
 }
 
-TEMPLATE
+POINT_TEMPLATE
 Point<T, S> Point<T, S>::operator/(Point<T, S> other)
 {
 	Point<T, S> result;
@@ -91,31 +91,31 @@ Point<T, S> Point<T, S>::operator/(Point<T, S> other)
 	return (result);
 }
 
-TEMPLATE
+POINT_TEMPLATE
 void Point<T, S>::operator+=(Point<T, S> other)
 {
 	for (int i = 0; i < S; i++) data[i] += other[i];
 }
 
-TEMPLATE
+POINT_TEMPLATE
 void Point<T, S>::operator-=(Point<T, S> other)
 {
 	for (int i = 0; i < S; i++) data[i] -= other[i];
 }
 
-TEMPLATE
+POINT_TEMPLATE
 void Point<T, S>::operator*=(Point<T, S> other)
 {
 	for (int i = 0; i < S; i++) data[i] *= other[i];
 }
 
-TEMPLATE
+POINT_TEMPLATE
 void Point<T, S>::operator/=(Point<T, S> other)
 {
 	for (int i = 0; i < S; i++) data[i] /= other[i];
 }
 
-//TEMPLATE
+//POINT_TEMPLATE
 //std::ostream& operator<<(std::ostream& out, Point<T, S>& point)
 //{
 //	for (int i = 0; i < S; i++) out << point[i] << (i + 1 < S ? ", " : "");
@@ -123,7 +123,7 @@ void Point<T, S>::operator/=(Point<T, S> other)
 //	return (out);
 //}
 
-TEMPLATE
+POINT_TEMPLATE
 std::ostream& operator<<(std::ostream& out, Point<T, S> point)
 {
 	for (int i = 0; i < S; i++)
