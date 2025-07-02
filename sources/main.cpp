@@ -19,6 +19,8 @@ int main(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	}
 
+	Manager::Start();
+
 	while (!Manager::ShouldClose())
 	{
 		Manager::Frame();

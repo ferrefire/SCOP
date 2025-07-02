@@ -143,6 +143,8 @@ void Pipeline::Destroy()
 		vkDestroyShaderModule(device->GetLogicalDevice(), shaderStage.module, nullptr);
 
 	config.shaderStages.clear();
+
+	std::cout << "Pipeline destroyed" << std::endl;
 }
 
 PipelineConfig Pipeline::DefaultConfig()

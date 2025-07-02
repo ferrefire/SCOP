@@ -2,6 +2,7 @@
 
 #include "manager.hpp"
 #include "image.hpp"
+#include "printer.hpp"
 
 #include <stdexcept>
 #include <iostream>
@@ -55,8 +56,6 @@ void Swapchain::CreateSwapchain()
 
 	if (vkCreateSwapchainKHR(device->GetLogicalDevice(), &createInfo, nullptr, &swapchain) != VK_SUCCESS)
 		throw (std::runtime_error("Failed to create swapchain"));
-
-	std::cout << "Swapchain created" << std::endl << std::endl;
 }
 
 void Swapchain::RetrieveImages()
@@ -71,8 +70,6 @@ void Swapchain::RetrieveImages()
 	vkGetSwapchainImagesKHR(device->GetLogicalDevice(), swapchain, &imageCount, images.data());
 
 	if (images.size() == 0) throw (std::runtime_error("Failed to retrieve swapchain images"));
-
-	std::cout << "Swapchain images retrieved" << std::endl << std::endl;
 }
 
 void Swapchain::CreateViews()
@@ -91,8 +88,6 @@ void Swapchain::CreateViews()
 
 		Image::CreateView(views[i], images[i], viewConfig, device);
 	}
-
-	std::cout << "Swapchain views created" << std::endl << std::endl;
 }
 
 void Swapchain::Destroy()
@@ -118,4 +113,12 @@ const std::vector<VkImageView>& Swapchain::GetViews()
 	if (views.size() == 0) throw (std::runtime_error("Swapchain views requested but don't exist"));
 
 	return (views);
+}
+
+std::ostream& operator<<(std::ostream& out, Swapchain& swapchain)
+{
+	out << std::endl;
+	out << VAR_VAL(swapchain.GetViews().size()) << std::endl;
+
+	return (out);
 }

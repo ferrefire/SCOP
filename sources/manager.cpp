@@ -3,6 +3,11 @@
 #include "graphics.hpp"
 #include "descriptor.hpp"
 
+#include "pipeline.hpp"
+#include "mesh.hpp"
+#include "buffer.hpp"
+#include "pass.hpp"
+
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
@@ -53,6 +58,7 @@ void Manager::CreateVulkan()
 	device.RetrieveQueues();
 	std::cout << "Device created: " << device << std::endl;
 	swapchain.Create(&window, &device);
+	std::cout << "Swapchain created: " << swapchain << std::endl;
 }
 
 void Manager::Destroy()
@@ -88,6 +94,25 @@ Device& Manager::GetDevice()
 Swapchain& Manager::GetSwapchain()
 {
 	return (swapchain);
+}
+
+void Manager::Start()
+{
+	//Buffer buffer;
+	//BufferConfig bufferConfig{};
+	//bufferConfig.size = 16;
+	//buffer.Create(bufferConfig, &device);
+
+	//Pass pass;
+	//PassConfig passConfig = Pass::DefaultConfig();
+	//pass.Create(passConfig, &device);
+
+	//Pipeline pipeline;
+	//PipelineConfig config = Pipeline::DefaultConfig();
+	//config.shader = "screen";
+	//config.vertexInfo = Mesh::GetVertexInfo(true, false, false, false);
+	//config.renderpass = pass.GetRenderpass();
+	//pipeline.Create(config, &device);
 }
 
 void Manager::Frame()

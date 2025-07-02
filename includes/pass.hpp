@@ -46,5 +46,9 @@ class Pass
 
 		void Destroy();
 
+		VkRenderPass& GetRenderpass();
+
 		static VkAttachmentDescription DefaultColorAttachment();
+		static AttachmentConfig DefaultAttachmentConfig();
+		static PassConfig DefaultConfig();
 };

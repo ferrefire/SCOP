@@ -29,6 +29,7 @@ class Manager
 		static Device& GetDevice();
 		static Swapchain& GetSwapchain();
 
+		static void Start();
 		static void Frame();
 		
 		static bool ShouldClose();

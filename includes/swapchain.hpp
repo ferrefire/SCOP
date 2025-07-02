@@ -7,6 +7,7 @@
 #include <GLFW/glfw3.h>
 
 #include <vector>
+#include <iostream>
 
 class Swapchain
 {
@@ -32,3 +33,5 @@ class Swapchain
 
 		const std::vector<VkImageView>& GetViews();
 };
+
+std::ostream& operator<<(std::ostream& out, Swapchain& swapchain);

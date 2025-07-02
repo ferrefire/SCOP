@@ -2,7 +2,7 @@
 
 project=scop
 path=$(pwd)
-dev="-DDEV=OFF"
+dev="-DDEV=ON"
 release=0
 
 run_command () 

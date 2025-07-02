@@ -116,6 +116,15 @@ void Pass::Destroy()
 		vkDestroyRenderPass(device->GetLogicalDevice(), renderpass, nullptr);
 		renderpass = nullptr;
 	}
+
+	std::cout << "Pass destroyed" << std::endl;
+}
+
+VkRenderPass& Pass::GetRenderpass()
+{
+	if (!renderpass) throw (std::runtime_error("Renderpass requested but not yet created"));
+
+	return (renderpass);
 }
 
 VkAttachmentDescription Pass::DefaultColorAttachment()
@@ -126,7 +135,29 @@ VkAttachmentDescription Pass::DefaultColorAttachment()
 	description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 	description.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
 	description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-	description.initialLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+	description.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
 	return (description);
+}
+
+AttachmentConfig Pass::DefaultAttachmentConfig()
+{
+	AttachmentConfig config{};
+	config.description = DefaultColorAttachment();
+	config.reference.attachment = 0;
+	config.reference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+	return (config);
+}
+
+PassConfig Pass::DefaultConfig()
+{
+	PassConfig config{};
+	config.colorAttachments.push_back(DefaultAttachmentConfig());
+	config.subpasses.resize(1);
+	config.subpasses[0].pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+	config.subpasses[0].colorAttachmentCount = 1;
+	config.subpasses[0].pColorAttachments = &config.colorAttachments[0].reference;
+
+	return (config);
 }
