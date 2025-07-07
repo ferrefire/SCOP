@@ -33,12 +33,6 @@ struct VertexInfo
 	std::vector<VkVertexInputAttributeDescription> attributeDescriptions;
 };
 
-struct MeshConfig
-{
-	VertexConfig vertexConfig = Position;
-	VkIndexType indexType = VK_INDEX_TYPE_UINT16;
-};
-
 #define MESH_TEMPLATE template <VertexConfig V, VkIndexType I>
 #define VERTEX_TEMPLATE template <VertexConfig V>
 
@@ -56,15 +50,17 @@ struct Vertex :
 	std::conditional_t<Bitmask::HasFlag(V, Coordinate), CoordinateStruct, Empty<Coordinate>>,
 	std::conditional_t<Bitmask::HasFlag(V, Normal), NormalStruct, Empty<Normal>>,
 	std::conditional_t<Bitmask::HasFlag(V, Color), ColorStruct, Empty<Color>>
-{};
+{
+	std::vector<float> GetData();
+};
 
 MESH_TEMPLATE
 class Mesh
 {
 	using indexType = typename std::conditional_t<I == VK_INDEX_TYPE_UINT16, uint16_t, uint32_t>;
+	const bool noIndices = I == VK_INDEX_TYPE_NONE_KHR;
 
 	private:
-		MeshConfig config{};
 		Device* device = nullptr;
 
 		std::vector<float> data;
@@ -74,17 +70,29 @@ class Mesh
 		Buffer vertexBuffer;
 		Buffer indexBuffer;
 
+		void CreateData();
+		void CreateVertexBuffer();
+		void CreateIndexBuffer();
+
 	public:
 		Mesh();
 		~Mesh();
 
-		void Create();
+		void Create(Device* meshDevice);
 
 		void Destroy();
 
+		const std::vector<Vertex<V>>& GetVertices() const;
+		const std::vector<float>& GetData() const;
+
+		void SetVertices(const std::vector<Vertex<V>>& newVertices);
 		void AddVertex(Vertex<V> vertex);
 		Vertex<V> GetVertex(indexType index);
 		Vertex<V> GetVertex(indexType index) const;
+		Vertex<V>& NewVertex();
+
+		void SetIndices(const std::vector<indexType>& newIndices);
+		void AddIndex(indexType index);
 
 		static VertexInfo GetVertexInfo(VertexConfig config);
 };

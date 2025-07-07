@@ -67,6 +67,7 @@ class Device
 		VkPhysicalDevice& GetPhysicalDevice();
 		VkDevice& GetLogicalDevice();
 		uint32_t GetQueueIndex(QueueType type);
+		VkQueue GetQueue(uint32_t index);
 		uint32_t FindMemoryType(uint32_t filter, VkMemoryPropertyFlags properties);
 
 		static std::vector<DeviceInfo> GetAvailableDevices();

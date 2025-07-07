@@ -79,17 +79,40 @@ const VkCommandBuffer& Command::GetBuffer()
 void Command::Begin()
 {
 	if (!buffer) throw (std::runtime_error("Command has no buffer"));
+	if (state != Idle) throw (std::runtime_error("Command is not idle"));
 	
 	VkCommandBufferBeginInfo beginInfo{};
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 	beginInfo.flags = config.usage;
 
 	if (vkBeginCommandBuffer(buffer, &beginInfo) != VK_SUCCESS) throw (std::runtime_error("Failed to begin command"));
+
+	state = Began;
 }
 
 void Command::End()
 {
 	if (!buffer) throw (std::runtime_error("Command has no buffer"));
+	if (state != Began) throw (std::runtime_error("Command has not yet began"));
 
 	if (vkEndCommandBuffer(buffer) != VK_SUCCESS) throw (std::runtime_error("Failed to end command"));
+
+	state = Ended;
+}
+
+void Command::Submit()
+{
+	if (!buffer) throw (std::runtime_error("Command has no buffer"));
+	if (!device) throw (std::runtime_error("Command has no device"));
+	if (state != Ended) throw (std::runtime_error("Command has not ended yet"));
+
+	VkSubmitInfo submitInfo{};
+	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	submitInfo.commandBufferCount = 1;
+	submitInfo.pCommandBuffers = &buffer;
+
+	vkQueueSubmit(device->GetQueue(config.queueIndex), 1, &submitInfo, VK_NULL_HANDLE);
+	vkQueueWaitIdle(device->GetQueue(config.queueIndex));
+
+	state = Idle;
 }

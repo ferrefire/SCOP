@@ -33,11 +33,18 @@ class Buffer
 		Buffer();
 		~Buffer();
 
-		void Create(const BufferConfig& bufferConfig, Device* bufferDevice);
+		void Create(const BufferConfig& bufferConfig, Device* bufferDevice, void* data);
 
 		void Destroy();
 
 		BufferConfig GetConfig();
+		void* GetAddress();
+
+		void CopyTo(VkBuffer target);
+
+		static BufferConfig StagingConfig();
+		static BufferConfig VertexConfig();
+		static BufferConfig IndexConfig();
 };
 
 std::ostream& operator<<(std::ostream& out, Buffer& buffer);

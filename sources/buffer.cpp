@@ -2,8 +2,11 @@
 
 #include "manager.hpp"
 #include "printer.hpp"
+#include "command.hpp"
+#include "bitmask.hpp"
 
 #include <stdexcept>
+#include <cstring>
 
 Buffer::Buffer()
 {
@@ -15,7 +18,7 @@ Buffer::~Buffer()
 	Destroy();
 }
 
-void Buffer::Create(const BufferConfig& bufferConfig, Device* bufferDevice = nullptr)
+void Buffer::Create(const BufferConfig& bufferConfig, Device* bufferDevice = nullptr, void* data = nullptr)
 {
 	config = bufferConfig;
 	device = bufferDevice;
@@ -24,6 +27,23 @@ void Buffer::Create(const BufferConfig& bufferConfig, Device* bufferDevice = nul
 
 	CreateBuffer();
 	AllocateMemory();
+
+	if (data != nullptr)
+	{
+		if (config.mapped && address != nullptr)
+		{
+			memcpy(address, data, static_cast<size_t>(config.size));
+		}
+		else if (!config.mapped && Bitmask::HasFlag(config.properties, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT))
+		{
+			Buffer stagingBuffer;
+			BufferConfig stagingConfig = Buffer::StagingConfig();
+			stagingConfig.size = config.size;
+			stagingBuffer.Create(stagingConfig, device, data);
+			stagingBuffer.CopyTo(buffer);
+			stagingBuffer.Destroy();
+		}
+	}
 }
 
 void Buffer::CreateBuffer()
@@ -44,6 +64,7 @@ void Buffer::CreateBuffer()
 void Buffer::AllocateMemory()
 {
 	if (memory) throw (std::runtime_error("Memory is already allocated"));
+	if (!buffer) throw (std::runtime_error("Buffer does not exist"));
 	if (!device) throw (std::runtime_error("Buffer has no device"));
 
 	VkDevice& logicalDevice = device->GetLogicalDevice();
@@ -94,6 +115,59 @@ void Buffer::Destroy()
 
 BufferConfig Buffer::GetConfig()
 {
+	return (config);
+}
+
+void* Buffer::GetAddress()
+{
+	if (!config.mapped) throw (std::runtime_error("Requested buffer address but buffer is not mapped"));
+
+	return (address);
+}
+
+void Buffer::CopyTo(VkBuffer target)
+{
+	if (!buffer) throw (std::runtime_error("Buffer does not exist"));
+	if (!target) throw (std::runtime_error("Buffer copy target does not exist"));
+
+	Command command;
+	CommandConfig commandConfig{};
+	command.Create(commandConfig, device);
+	command.Begin();
+
+	VkBufferCopy copyInfo{};
+	copyInfo.size = config.size;
+
+	vkCmdCopyBuffer(command.GetBuffer(), buffer, target, 1, &copyInfo);
+}
+
+BufferConfig Buffer::StagingConfig()
+{
+	BufferConfig config{};
+	config.mapped = true;
+	config.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+	config.properties = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+
+	return (config);
+}
+
+BufferConfig Buffer::VertexConfig()
+{
+	BufferConfig config{};
+	config.mapped = false;
+	config.usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+	config.properties = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
+
+	return (config);
+}
+
+BufferConfig Buffer::IndexConfig()
+{
+	BufferConfig config{};
+	config.mapped = false;
+	config.usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
+	config.properties = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
+
 	return (config);
 }
 

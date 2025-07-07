@@ -16,10 +16,12 @@ struct CommandConfig
 	VkCommandPoolCreateFlags poolUsage = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 };
 
-
 class Command
 {
+	enum State {Idle, Began, Ended};
+
 	private:
+		State state = Idle;
 		CommandConfig config{};
 		Device* device = nullptr;
 
@@ -41,4 +43,5 @@ class Command
 
 		void Begin();
 		void End();
+		void Submit();
 };

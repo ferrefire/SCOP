@@ -164,6 +164,20 @@ uint32_t Device::GetQueueIndex(QueueType type)
 	return (CUI(index));
 }
 
+VkQueue Device::GetQueue(uint32_t index)
+{
+	if (queueFamilies.graphicsFamily >= 0 && static_cast<uint32_t>(queueFamilies.graphicsFamily) == index)
+		return (queueFamilies.graphicsQueue);
+	else if (queueFamilies.computeFamily >= 0 && static_cast<uint32_t>(queueFamilies.computeFamily) == index)
+		return (queueFamilies.computeQueue);
+	else if (queueFamilies.presentFamily >= 0 && static_cast<uint32_t>(queueFamilies.presentFamily) == index)
+		return (queueFamilies.presentQueue);
+	else
+		throw (std::runtime_error("There is no queue with the given index"));
+
+	return (nullptr);
+}
+
 uint32_t Device::FindMemoryType(uint32_t filter, VkMemoryPropertyFlags properties)
 {
 	if (!physicalDevice) throw (std::runtime_error("Physical device does not exist"));

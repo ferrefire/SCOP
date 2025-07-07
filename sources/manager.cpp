@@ -122,11 +122,27 @@ void Manager::Start()
 	//command.Create(commandConfig, &device);
 
 	//Mesh<Position | Normal, VK_INDEX_TYPE_UINT16> mesh;
+	//float val = 0;
+	//for (int i = 0; i < 3; i++)
+	//{
+	//	Vertex<Position | Normal> vert;
+	//	vert.position = point3D({val, val + 1, val + 2});
+	//	val += 3;
+	//	//vert.coordinate = point2D({val, val + 1});
+	//	//val += 2;
+	//	vert.normal = point3D({val, val + 1, val + 2});
+	//	val += 3;
+	//	mesh.AddVertex(vert);
+	//}
+	//mesh.Create(&device);
+	//auto& vert = mesh.NewVertex();
+	//vert.normal = point3D({22, 32, 1234});
 	//Vertex<Position | Normal> vertex;
 	//vertex.position = point3D({1, 2, 3});
 	////vertex.coordinate = point2D({4, 5});
 	//vertex.normal = point3D({6, 7, 8});
 	////vertex.color = point3D({9, 10, 11});
+	//std::cout << "Mesh created: " << mesh << std::endl;
 }
 
 void Manager::Frame()
