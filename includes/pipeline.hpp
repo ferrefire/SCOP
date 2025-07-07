@@ -54,5 +54,7 @@ class Pipeline
 
 		void Destroy();
 
+		void Bind(VkCommandBuffer commandBuffer);
+
 		static PipelineConfig DefaultConfig();
 };

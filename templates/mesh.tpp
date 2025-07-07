@@ -41,7 +41,6 @@ void Mesh<V, I>::CreateData()
 	{
 		for (float value : vertex.GetData())
 		{
-			//data.push_back(value);
 			data[i++] = value;
 		}
 	}
@@ -50,9 +49,9 @@ void Mesh<V, I>::CreateData()
 MESH_TEMPLATE
 void Mesh<V, I>::CreateVertexBuffer()
 {
+	if (vertexBuffer.buffer) throw (std::runtime_error("Mesh vertex buffer already exists"));
 	if (data.size() == 0) throw (std::runtime_error("Mesh has no data"));
 	if (!device) throw (std::runtime_error("Mesh has no device"));
-	//if (!noIndices && indices.size == 0) throw (std::runtime_error("Mesh has no indices"));
 
 	BufferConfig bufferConfig = Buffer::VertexConfig();
 	bufferConfig.size = static_cast<VkDeviceSize>(sizeof(data[0]) * data.size());
@@ -64,6 +63,7 @@ MESH_TEMPLATE
 void Mesh<V, I>::CreateIndexBuffer()
 {
 	if (noIndices) throw (std::runtime_error("Can't create index buffer because mesh is not indexed"));
+	if (indexBuffer.buffer) throw (std::runtime_error("Mesh index buffer already exists"));
 	if (indices.size() == 0) throw (std::runtime_error("Mesh has no indices"));
 	if (!device) throw (std::runtime_error("Mesh has no device"));
 
@@ -78,6 +78,10 @@ void Mesh<V, I>::Destroy()
 {
 	vertexBuffer.Destroy();
 	indexBuffer.Destroy();
+
+	data.clear();
+	vertices.clear();
+	indices.clear();
 }
 
 MESH_TEMPLATE
@@ -86,6 +90,14 @@ const std::vector<Vertex<V>>& Mesh<V, I>::GetVertices() const
 	if (vertices.size() <= 0) throw (std::runtime_error("Mesh vertices requested but does not exist"));
 
 	return (vertices);
+}
+
+MESH_TEMPLATE
+const std::vector<std::conditional_t<I == VK_INDEX_TYPE_UINT16, uint16_t, uint32_t>>& Mesh<V, I>::GetIndices() const
+{
+	if (indices.size() <= 0) throw (std::runtime_error("Mesh indices requested but does not exist"));
+
+	return (indices);
 }
 
 MESH_TEMPLATE
@@ -110,30 +122,6 @@ void Mesh<V, I>::AddVertex(Vertex<V> vertex)
 }
 
 MESH_TEMPLATE
-Vertex<V> Mesh<V, I>::GetVertex(indexType index)
-{
-	if (index < 0 || index >= vertices.size()) throw (std::runtime_error("Index out of range"));
-
-	return (vertices[index]);
-}
-
-MESH_TEMPLATE
-Vertex<V> Mesh<V, I>::GetVertex(indexType index) const
-{
-	if (index < 0 || index >= vertices.size()) throw (std::runtime_error("Index out of range"));
-
-	return (vertices[index]);
-}
-
-MESH_TEMPLATE
-Vertex<V>& Mesh<V, I>::NewVertex()
-{
-	Vertex<V> vertex;
-	vertices.push_back(vertex);
-	return (vertices[vertices.size() - 1]);
-}
-
-MESH_TEMPLATE
 void Mesh<V, I>::SetIndices(const std::vector<indexType>& newIndices)
 {
 	indices.clear();
@@ -144,6 +132,19 @@ MESH_TEMPLATE
 void Mesh<V, I>::AddIndex(indexType index)
 {
 	indices.push_back(index);
+}
+
+MESH_TEMPLATE
+void Mesh<V, I>::Bind(VkCommandBuffer commandBuffer)
+{
+	if (!commandBuffer) throw (std::runtime_error("Can't bind mesh because the command buffer does not exist"));
+	if (!vertexBuffer.buffer) throw (std::runtime_error("Mesh vertex buffer does not exist"));
+	if (!noIndices && !indexBuffer.buffer) throw (std::runtime_error("Mesh index buffer does not exist"));
+
+	VkDeviceSize offsets[]{0};
+
+	vkCmdBindVertexBuffers(commandBuffer, 0, 1, &vertexBuffer.buffer, offsets);
+	if (!noIndices) vkCmdBindIndexBuffer(commandBuffer, indexBuffer.buffer, 0, I);
 }
 
 MESH_TEMPLATE

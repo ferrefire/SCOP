@@ -147,6 +147,14 @@ void Pipeline::Destroy()
 	std::cout << "Pipeline destroyed" << std::endl;
 }
 
+void Pipeline::Bind(VkCommandBuffer commandBuffer)
+{
+	if (!commandBuffer) throw (std::runtime_error("Can't bind pipeline because the command buffer does not exist"));
+	if (!pipeline) throw (std::runtime_error("Pipeline does not exist"));
+
+	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
+}
+
 PipelineConfig Pipeline::DefaultConfig()
 {
 	PipelineConfig config{};

@@ -3,6 +3,7 @@
 #include "manager.hpp"
 #include "image.hpp"
 #include "printer.hpp"
+#include "utilities.hpp"
 
 #include <stdexcept>
 #include <iostream>
@@ -70,6 +71,8 @@ void Swapchain::RetrieveImages()
 	vkGetSwapchainImagesKHR(device->GetLogicalDevice(), swapchain, &imageCount, images.data());
 
 	if (images.size() == 0) throw (std::runtime_error("Failed to retrieve swapchain images"));
+
+	frameCount = CUI(images.size());
 }
 
 void Swapchain::CreateViews()
@@ -106,6 +109,18 @@ void Swapchain::Destroy()
 		swapchain = nullptr;
 		images.clear();
 	}
+}
+
+const VkSwapchainKHR& Swapchain::GetSwapchain() const
+{
+	if (!swapchain) throw (std::runtime_error("Swapchain requested but does not exist"));
+
+	return (swapchain);
+}
+
+const uint32_t Swapchain::GetFrameCount() const
+{
+	return (frameCount);
 }
 
 const std::vector<VkImageView>& Swapchain::GetViews()

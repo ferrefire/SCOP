@@ -79,6 +79,8 @@ void Device::CreateLogical()
 
 	if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &logicalDevice) != VK_SUCCESS)
 		throw (std::runtime_error("Failed to create logical device"));
+
+	created = true;
 }
 
 void Device::SelectQueues()
@@ -132,6 +134,11 @@ void Device::Destroy()
 		physicalDevice = nullptr;
 		queueFamilies = QueueFamilies{};
 	}
+}
+
+const bool& Device::IsCreated() const
+{
+	return (created);
 }
 
 VkPhysicalDevice& Device::GetPhysicalDevice()

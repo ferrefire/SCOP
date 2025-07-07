@@ -1,6 +1,7 @@
 #include "manager.hpp"
 
 #include "graphics.hpp"
+#include "renderer.hpp"
 #include "descriptor.hpp"
 
 #include "pipeline.hpp"
@@ -61,10 +62,14 @@ void Manager::CreateVulkan()
 	std::cout << "Device created: " << device << std::endl;
 	swapchain.Create(&window, &device);
 	std::cout << "Swapchain created: " << swapchain << std::endl;
+	Renderer::Create(swapchain.GetFrameCount(), &device, &swapchain);
 }
 
 void Manager::Destroy()
 {
+	if (device.IsCreated() && vkDeviceWaitIdle(device.GetLogicalDevice()) != VK_SUCCESS)
+		throw (std::runtime_error("Failed to wait for device to be idle"));
+
 	DestroyGLFW();
 	DestroyVulkan();
 }
@@ -78,6 +83,7 @@ void Manager::DestroyGLFW()
 void Manager::DestroyVulkan()
 {
 	swapchain.Destroy();
+	Renderer::Destroy();
 	window.DestroySurface();
 	device.Destroy();
 	Graphics::DestroyInstance();
@@ -150,6 +156,8 @@ void Manager::Start()
 void Manager::Frame()
 {
 	glfwPollEvents();
+
+	Renderer::Frame();
 }
 
 bool Manager::ShouldClose()

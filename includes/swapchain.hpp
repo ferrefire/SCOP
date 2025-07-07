@@ -18,6 +18,7 @@ class Swapchain
 		VkSwapchainKHR swapchain = nullptr;
 		std::vector<VkImage> images;
 		std::vector<VkImageView> views;
+		uint32_t frameCount = 0;
 
 		void CreateSwapchain();
 		void RetrieveImages();
@@ -31,6 +32,8 @@ class Swapchain
 
 		void Destroy();
 
+		const VkSwapchainKHR& GetSwapchain() const;
+		const uint32_t GetFrameCount() const;
 		const std::vector<VkImageView>& GetViews();
 };
 

@@ -6,6 +6,7 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
+#include <vector>
 
 struct CommandConfig
 {
@@ -14,6 +15,10 @@ struct CommandConfig
 	VkCommandBufferUsageFlags usage = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 	VkCommandBufferLevel level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 	VkCommandPoolCreateFlags poolUsage = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+	VkFence fence = VK_NULL_HANDLE;
+	std::vector<VkSemaphore> waitSemaphores;
+	std::vector<VkSemaphore> signalSemaphores;
+	bool wait = true;
 };
 
 class Command

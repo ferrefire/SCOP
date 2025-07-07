@@ -83,16 +83,16 @@ class Mesh
 		void Destroy();
 
 		const std::vector<Vertex<V>>& GetVertices() const;
+		const std::vector<indexType>& GetIndices() const;
 		const std::vector<float>& GetData() const;
 
 		void SetVertices(const std::vector<Vertex<V>>& newVertices);
 		void AddVertex(Vertex<V> vertex);
-		Vertex<V> GetVertex(indexType index);
-		Vertex<V> GetVertex(indexType index) const;
-		Vertex<V>& NewVertex();
 
 		void SetIndices(const std::vector<indexType>& newIndices);
 		void AddIndex(indexType index);
+
+		void Bind(VkCommandBuffer commandBuffer);
 
 		static VertexInfo GetVertexInfo(VertexConfig config);
 };

@@ -47,6 +47,7 @@ class Device
 {
 	private:
 		DeviceConfig config{};
+		bool created = false;
 
 		VkPhysicalDevice physicalDevice = nullptr;
 		VkDevice logicalDevice = nullptr;
@@ -64,6 +65,7 @@ class Device
 
 		void Destroy();
 
+		const bool& IsCreated() const;
 		VkPhysicalDevice& GetPhysicalDevice();
 		VkDevice& GetLogicalDevice();
 		uint32_t GetQueueIndex(QueueType type);
