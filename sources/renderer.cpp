@@ -142,7 +142,17 @@ void Renderer::RecordCommands()
 {
 	commands[currentFrame].Begin();
 
+	//Continue from here
+
+	//Start render pass
+
+	//Bind pipeline
+
+	//Bind mesh
+
 	//Record commands
+
+	//End render pass
 
 	commands[currentFrame].End();
 

@@ -106,6 +106,8 @@ Swapchain& Manager::GetSwapchain()
 
 void Manager::Start()
 {
+	//Renderer::Start();
+
 	//Buffer buffer;
 	//BufferConfig bufferConfig{};
 	//bufferConfig.size = 16;
