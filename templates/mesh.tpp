@@ -14,7 +14,7 @@ Mesh<V, I>::Mesh()
 MESH_TEMPLATE
 Mesh<V, I>::~Mesh()
 {
-
+	Destroy();
 }
 
 MESH_TEMPLATE
@@ -25,6 +25,8 @@ void Mesh<V, I>::Create(Device* meshDevice)
 	if (!device) device = &Manager::GetDevice();
 
 	CreateData();
+	CreateVertexBuffer();
+	CreateIndexBuffer();
 }
 
 MESH_TEMPLATE
@@ -49,6 +51,7 @@ MESH_TEMPLATE
 void Mesh<V, I>::CreateVertexBuffer()
 {
 	if (data.size() == 0) throw (std::runtime_error("Mesh has no data"));
+	if (!device) throw (std::runtime_error("Mesh has no device"));
 	//if (!noIndices && indices.size == 0) throw (std::runtime_error("Mesh has no indices"));
 
 	BufferConfig bufferConfig = Buffer::VertexConfig();
@@ -58,9 +61,23 @@ void Mesh<V, I>::CreateVertexBuffer()
 }
 
 MESH_TEMPLATE
+void Mesh<V, I>::CreateIndexBuffer()
+{
+	if (noIndices) throw (std::runtime_error("Can't create index buffer because mesh is not indexed"));
+	if (indices.size() == 0) throw (std::runtime_error("Mesh has no indices"));
+	if (!device) throw (std::runtime_error("Mesh has no device"));
+
+	BufferConfig bufferConfig = Buffer::IndexConfig();
+	bufferConfig.size = static_cast<VkDeviceSize>(sizeof(indices[0]) * indices.size());
+
+	indexBuffer.Create(bufferConfig, device, indices.data());
+}
+
+MESH_TEMPLATE
 void Mesh<V, I>::Destroy()
 {
-	
+	vertexBuffer.Destroy();
+	indexBuffer.Destroy();
 }
 
 MESH_TEMPLATE
@@ -181,7 +198,7 @@ VertexInfo Mesh<V, I>::GetVertexInfo(VertexConfig config)
 		index++;
 	}
 
-	vertexInfo.floatCount = vertexInfo.bindingDescription.stride / 8;
+	vertexInfo.floatCount = vertexInfo.bindingDescription.stride / sizeof(float);
 
 	return (vertexInfo);
 }

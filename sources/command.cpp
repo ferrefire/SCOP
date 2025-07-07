@@ -66,7 +66,7 @@ void Command::Destroy()
 		buffer = nullptr;
 	}
 
-	std::cout << "Buffer destroyed" << std::endl;
+	//std::cout << "Buffer destroyed" << std::endl;
 }
 
 const VkCommandBuffer& Command::GetBuffer()

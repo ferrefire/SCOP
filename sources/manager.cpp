@@ -121,20 +121,22 @@ void Manager::Start()
 	//commandConfig.queueIndex = device.GetQueueIndex(QueueType::Graphics);
 	//command.Create(commandConfig, &device);
 
-	//Mesh<Position | Normal, VK_INDEX_TYPE_UINT16> mesh;
+	//Mesh<Position, VK_INDEX_TYPE_UINT16> mesh;
 	//float val = 0;
 	//for (int i = 0; i < 3; i++)
 	//{
-	//	Vertex<Position | Normal> vert;
+	//	Vertex<Position> vert;
 	//	vert.position = point3D({val, val + 1, val + 2});
 	//	val += 3;
 	//	//vert.coordinate = point2D({val, val + 1});
 	//	//val += 2;
-	//	vert.normal = point3D({val, val + 1, val + 2});
-	//	val += 3;
+	//	//vert.normal = point3D({val, val + 1, val + 2});
+	//	//val += 3;
 	//	mesh.AddVertex(vert);
+	//	mesh.AddIndex(i);
 	//}
 	//mesh.Create(&device);
+	//std::cout << "Mesh created: " << mesh << std::endl;
 	//auto& vert = mesh.NewVertex();
 	//vert.normal = point3D({22, 32, 1234});
 	//Vertex<Position | Normal> vertex;
