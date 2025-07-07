@@ -120,6 +120,13 @@ void Manager::Start()
 	//CommandConfig commandConfig{};
 	//commandConfig.queueIndex = device.GetQueueIndex(QueueType::Graphics);
 	//command.Create(commandConfig, &device);
+
+	//Mesh<Position | Normal, VK_INDEX_TYPE_UINT16> mesh;
+	//Vertex<Position | Normal> vertex;
+	//vertex.position = point3D({1, 2, 3});
+	////vertex.coordinate = point2D({4, 5});
+	//vertex.normal = point3D({6, 7, 8});
+	////vertex.color = point3D({9, 10, 11});
 }
 
 void Manager::Frame()
