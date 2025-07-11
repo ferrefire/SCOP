@@ -57,6 +57,8 @@ void Test(VkCommandBuffer commandBuffer, uint32_t currentFrame)
 
 		mesh.Create(&Manager::GetDevice());
 
+		std::cout << "Mesh: " << mesh << std::endl;
+
 		PassConfig passConfig = Pass::DefaultConfig();
 		pass.Create(passConfig, &Manager::GetDevice());
 
@@ -67,10 +69,7 @@ void Test(VkCommandBuffer commandBuffer, uint32_t currentFrame)
 		pipelineConfig.vertexInfo = mesh.GetVertexInfo();
 		pipelineConfig.renderpass = pass.GetRenderpass();
 		pipelineConfig.scissor.extent = windowConfig.extent;
-		//pipelineConfig.dynamicStates.push_back(VK_DYNAMIC_STATE_VIEWPORT);
-		//pipelineConfig.dynamicStates.push_back(VK_DYNAMIC_STATE_SCISSOR);
-		//pipelineConfig.rendering.colorAttachmentCount = 1;
-		//pipelineConfig.rendering.pColorAttachmentFormats = &windowConfig.format.format;
+		pipelineConfig.rasterization.cullMode = VK_CULL_MODE_NONE;
 		pipeline.Create(pipelineConfig, &Manager::GetDevice());
 
 		Renderer::AddPass(&pass);
@@ -179,54 +178,6 @@ void Manager::Start()
 	Test(nullptr, 0);
 
 	Renderer::RegisterCall(Test);
-
-	//Renderer::Start();
-
-	//Buffer buffer;
-	//BufferConfig bufferConfig{};
-	//bufferConfig.size = 16;
-	//buffer.Create(bufferConfig, &device);
-
-	//Pass pass;
-	//PassConfig passConfig = Pass::DefaultConfig();
-	//pass.Create(passConfig, &device);
-
-	//Pipeline pipeline;
-	//PipelineConfig config = Pipeline::DefaultConfig();
-	//config.shader = "screen";
-	//config.vertexInfo = Mesh::GetVertexInfo(true, false, false, false);
-	//config.renderpass = pass.GetRenderpass();
-	//pipeline.Create(config, &device);
-
-	//Command command;
-	//CommandConfig commandConfig{};
-	//commandConfig.queueIndex = device.GetQueueIndex(QueueType::Graphics);
-	//command.Create(commandConfig, &device);
-
-	//Mesh<Position, VK_INDEX_TYPE_UINT16> mesh;
-	//float val = 0;
-	//for (int i = 0; i < 3; i++)
-	//{
-	//	Vertex<Position> vert;
-	//	vert.position = point3D({val, val + 1, val + 2});
-	//	val += 3;
-	//	//vert.coordinate = point2D({val, val + 1});
-	//	//val += 2;
-	//	//vert.normal = point3D({val, val + 1, val + 2});
-	//	//val += 3;
-	//	mesh.AddVertex(vert);
-	//	mesh.AddIndex(i);
-	//}
-	//mesh.Create(&device);
-	//std::cout << "Mesh created: " << mesh << std::endl;
-	//auto& vert = mesh.NewVertex();
-	//vert.normal = point3D({22, 32, 1234});
-	//Vertex<Position | Normal> vertex;
-	//vertex.position = point3D({1, 2, 3});
-	////vertex.coordinate = point2D({4, 5});
-	//vertex.normal = point3D({6, 7, 8});
-	////vertex.color = point3D({9, 10, 11});
-	//std::cout << "Mesh created: " << mesh << std::endl;
 }
 
 void Manager::Frame()

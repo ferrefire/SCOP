@@ -21,7 +21,6 @@ struct PipelineConfig
     VkPipelineColorBlendAttachmentState colorBlendAttachment{};
     VkPipelineColorBlendStateCreateInfo colorBlending{};
 	VkPipelineDynamicStateCreateInfo dynamics{};
-	//VkPipelineRenderingCreateInfo rendering{};
 
 	std::string shader = "";
 	VertexInfo vertexInfo{};

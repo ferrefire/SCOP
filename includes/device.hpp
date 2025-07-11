@@ -22,7 +22,6 @@ struct DeviceConfig
 	DeviceType type = DeviceType::Best;
 	bool tesselation = false;
 	bool anisotropic = false;
-	bool dynamicRendering = true;
 };
 
 struct QueueFamilies

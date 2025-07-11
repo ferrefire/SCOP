@@ -113,7 +113,6 @@ void Pipeline::CreatePipeline()
 	createInfo.layout = layout;
 	createInfo.renderPass = config.renderpass;
 	createInfo.subpass = config.subpass;
-	//createInfo.pNext = &config.rendering;
 
 	if (vkCreateGraphicsPipelines(device->GetLogicalDevice(), VK_NULL_HANDLE, 1, &createInfo, nullptr, &pipeline) != VK_SUCCESS)
 		throw (std::runtime_error("Failed to create pipeline"));
@@ -189,7 +188,7 @@ PipelineConfig Pipeline::DefaultConfig()
 	config.multisampling.alphaToOneEnable = VK_FALSE;
 
 	config.depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-	config.depthStencil.depthTestEnable = VK_FALSE;
+	config.depthStencil.depthTestEnable = VK_TRUE;
 	config.depthStencil.depthWriteEnable = VK_TRUE;
 	config.depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
 	config.depthStencil.depthBoundsTestEnable = VK_FALSE;
@@ -219,8 +218,6 @@ PipelineConfig Pipeline::DefaultConfig()
 
 	config.scissor.offset = {0, 0};
 	config.scissor.extent = VkExtent2D{};
-
-	//config.rendering.sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO;
 
 	return (config);
 }

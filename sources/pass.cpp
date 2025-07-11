@@ -135,7 +135,7 @@ void Pass::Begin(VkCommandBuffer commandBuffer, uint32_t renderIndex)
 	if (state != Ended) throw (std::runtime_error("Pass has not yet ended"));
 
 	std::vector<VkClearValue> clearValues(1);
-	clearValues[0].color = {{1.0f, 1.0f, 1.0f, 1.0f}};
+	clearValues[0].color = {{0.0f, 0.0f, 0.0f, 0.0f}};
 	//clearValues[1].color = {{1.0f, 1.0f, 1.0f, 1.0f}};
 	//clearValues[2].depthStencil = {1.0f, 0};
 
