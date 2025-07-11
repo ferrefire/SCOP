@@ -34,6 +34,7 @@ class Swapchain
 
 		const VkSwapchainKHR& GetSwapchain() const;
 		const uint32_t GetFrameCount() const;
+		const std::vector<VkImage>& GetImages();
 		const std::vector<VkImageView>& GetViews();
 };
 

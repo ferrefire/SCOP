@@ -49,7 +49,7 @@ void Mesh<V, I>::CreateData()
 MESH_TEMPLATE
 void Mesh<V, I>::CreateVertexBuffer()
 {
-	if (vertexBuffer.buffer) throw (std::runtime_error("Mesh vertex buffer already exists"));
+	//if (vertexBuffer.GetBuffer()) throw (std::runtime_error("Mesh vertex buffer already exists"));
 	if (data.size() == 0) throw (std::runtime_error("Mesh has no data"));
 	if (!device) throw (std::runtime_error("Mesh has no device"));
 
@@ -63,7 +63,7 @@ MESH_TEMPLATE
 void Mesh<V, I>::CreateIndexBuffer()
 {
 	if (noIndices) throw (std::runtime_error("Can't create index buffer because mesh is not indexed"));
-	if (indexBuffer.buffer) throw (std::runtime_error("Mesh index buffer already exists"));
+	//if (indexBuffer.GetBuffer()) throw (std::runtime_error("Mesh index buffer already exists"));
 	if (indices.size() == 0) throw (std::runtime_error("Mesh has no indices"));
 	if (!device) throw (std::runtime_error("Mesh has no device"));
 
@@ -138,23 +138,23 @@ MESH_TEMPLATE
 void Mesh<V, I>::Bind(VkCommandBuffer commandBuffer)
 {
 	if (!commandBuffer) throw (std::runtime_error("Can't bind mesh because the command buffer does not exist"));
-	if (!vertexBuffer.buffer) throw (std::runtime_error("Mesh vertex buffer does not exist"));
-	if (!noIndices && !indexBuffer.buffer) throw (std::runtime_error("Mesh index buffer does not exist"));
+	//if (!vertexBuffer.GetBuffer()) throw (std::runtime_error("Mesh vertex buffer does not exist"));
+	//if (!noIndices && !indexBuffer.GetBuffer()) throw (std::runtime_error("Mesh index buffer does not exist"));
 
 	VkDeviceSize offsets[]{0};
 
-	vkCmdBindVertexBuffers(commandBuffer, 0, 1, &vertexBuffer.buffer, offsets);
-	if (!noIndices) vkCmdBindIndexBuffer(commandBuffer, indexBuffer.buffer, 0, I);
+	vkCmdBindVertexBuffers(commandBuffer, 0, 1, &vertexBuffer.GetBuffer(), offsets);
+	if (!noIndices) vkCmdBindIndexBuffer(commandBuffer, indexBuffer.GetBuffer(), 0, I);
 }
 
 MESH_TEMPLATE
-VertexInfo Mesh<V, I>::GetVertexInfo(VertexConfig config)
+VertexInfo Mesh<V, I>::GetVertexInfo()
 {
 	VertexInfo vertexInfo{};
 
 	vertexInfo.bindingCount = 1;
-	vertexInfo.attributeCount = Bitmask::HasFlag(config, Position) + Bitmask::HasFlag(config, Coordinate) + 
-		Bitmask::HasFlag(config, Normal) + Bitmask::HasFlag(config, Color);
+	vertexInfo.attributeCount = Bitmask::HasFlag(V, Position) + Bitmask::HasFlag(V, Coordinate) + 
+		Bitmask::HasFlag(V, Normal) + Bitmask::HasFlag(V, Color);
 	vertexInfo.attributeDescriptions.resize(vertexInfo.attributeCount);
 	
 	vertexInfo.bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
@@ -162,7 +162,7 @@ VertexInfo Mesh<V, I>::GetVertexInfo(VertexConfig config)
 	vertexInfo.bindingDescription.stride = 0;
 
 	int index = 0;
-	if (Bitmask::HasFlag(config, Position))
+	if (Bitmask::HasFlag(V, Position))
 	{
 		vertexInfo.attributeDescriptions[index].binding = 0;
 		vertexInfo.attributeDescriptions[index].location = index;
@@ -171,7 +171,7 @@ VertexInfo Mesh<V, I>::GetVertexInfo(VertexConfig config)
 		vertexInfo.bindingDescription.stride += sizeof(point3D);
 		index++;
 	}
-	if (Bitmask::HasFlag(config, Coordinate))
+	if (Bitmask::HasFlag(V, Coordinate))
 	{
 		vertexInfo.attributeDescriptions[index].binding = 0;
 		vertexInfo.attributeDescriptions[index].location = index;
@@ -180,7 +180,7 @@ VertexInfo Mesh<V, I>::GetVertexInfo(VertexConfig config)
 		vertexInfo.bindingDescription.stride += sizeof(point2D);
 		index++;
 	}
-	if (Bitmask::HasFlag(config, Normal))
+	if (Bitmask::HasFlag(V, Normal))
 	{
 		vertexInfo.attributeDescriptions[index].binding = 0;
 		vertexInfo.attributeDescriptions[index].location = index;
@@ -189,7 +189,7 @@ VertexInfo Mesh<V, I>::GetVertexInfo(VertexConfig config)
 		vertexInfo.bindingDescription.stride += sizeof(point3D);
 		index++;
 	}
-	if (Bitmask::HasFlag(config, Color))
+	if (Bitmask::HasFlag(V, Color))
 	{
 		vertexInfo.attributeDescriptions[index].binding = 0;
 		vertexInfo.attributeDescriptions[index].location = index;

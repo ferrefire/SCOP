@@ -117,7 +117,7 @@ void Pass::Destroy()
 		renderpass = nullptr;
 	}
 
-	std::cout << "Pass destroyed" << std::endl;
+	//std::cout << "Pass destroyed" << std::endl;
 }
 
 VkRenderPass& Pass::GetRenderpass()
@@ -125,6 +125,42 @@ VkRenderPass& Pass::GetRenderpass()
 	if (!renderpass) throw (std::runtime_error("Renderpass requested but not yet created"));
 
 	return (renderpass);
+}
+
+void Pass::Begin(VkCommandBuffer commandBuffer, uint32_t renderIndex)
+{
+	if (!commandBuffer) throw (std::runtime_error("Cannot begin pass because the command buffer does not exist"));
+	if (!renderpass) throw (std::runtime_error("Render pass does not exist"));
+	if (renderIndex >= framebuffers.size()) throw (std::runtime_error("Render index is out of range"));
+	if (state != Ended) throw (std::runtime_error("Pass has not yet ended"));
+
+	std::vector<VkClearValue> clearValues(1);
+	clearValues[0].color = {{1.0f, 1.0f, 1.0f, 1.0f}};
+	//clearValues[1].color = {{1.0f, 1.0f, 1.0f, 1.0f}};
+	//clearValues[2].depthStencil = {1.0f, 0};
+
+	VkRenderPassBeginInfo beginInfo{};
+	beginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+	beginInfo.renderPass = renderpass;
+	beginInfo.framebuffer = framebuffers[renderIndex];
+	beginInfo.renderArea.offset = {0, 0};
+	beginInfo.renderArea.extent = Manager::GetWindow().GetConfig().extent;
+	beginInfo.clearValueCount = CUI(clearValues.size());
+	beginInfo.pClearValues = clearValues.data();
+
+	vkCmdBeginRenderPass(commandBuffer, &beginInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+	state = Began;
+}
+
+void Pass::End(VkCommandBuffer commandBuffer)
+{
+	if (!commandBuffer) throw (std::runtime_error("Cannot end pass because the command buffer does not exist"));
+	if (state != Began) throw (std::runtime_error("Pass has not yet began"));
+
+	vkCmdEndRenderPass(commandBuffer);
+
+	state = Ended;
 }
 
 VkAttachmentDescription Pass::DefaultColorAttachment()

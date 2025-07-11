@@ -123,6 +123,13 @@ const uint32_t Swapchain::GetFrameCount() const
 	return (frameCount);
 }
 
+const std::vector<VkImage>& Swapchain::GetImages()
+{
+	if (images.size() == 0) throw (std::runtime_error("Swapchain images requested but don't exist"));
+
+	return (images);
+}
+
 const std::vector<VkImageView>& Swapchain::GetViews()
 {
 	if (views.size() == 0) throw (std::runtime_error("Swapchain views requested but don't exist"));

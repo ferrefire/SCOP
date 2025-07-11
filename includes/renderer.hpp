@@ -9,6 +9,7 @@
 #include <GLFW/glfw3.h>
 
 #include <vector>
+#include <functional>
 
 class Renderer
 {
@@ -25,6 +26,7 @@ class Renderer
 		static std::vector<VkSemaphore> presentSemaphores;
 		static std::vector<Command> commands;
 		static std::vector<Pass*> passes;
+		static std::vector<std::function<void(VkCommandBuffer, uint32_t)>> calls;
 
 		static void CreateFences();
 		static void CreateSemaphores();
@@ -44,4 +46,5 @@ class Renderer
 		static void Frame();
 
 		static void AddPass(Pass* pass);
+		static void RegisterCall(std::function<void(VkCommandBuffer, uint32_t)> call);
 };

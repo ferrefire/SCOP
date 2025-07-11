@@ -28,7 +28,10 @@ struct PassConfig
 
 class Pass
 {
+	enum State {Began, Ended};
+
 	private:
+		State state = Ended;
 		PassConfig config{};
 		Device* device = nullptr;
 
@@ -47,6 +50,9 @@ class Pass
 		void Destroy();
 
 		VkRenderPass& GetRenderpass();
+
+		void Begin(VkCommandBuffer commandBuffer, uint32_t renderIndex);
+		void End(VkCommandBuffer commandBuffer);
 
 		static VkAttachmentDescription DefaultColorAttachment();
 		static AttachmentConfig DefaultAttachmentConfig();

@@ -94,7 +94,9 @@ class Mesh
 
 		void Bind(VkCommandBuffer commandBuffer);
 
-		static VertexInfo GetVertexInfo(VertexConfig config);
+		VertexInfo GetVertexInfo();
+
+		//static VertexInfo GetVertexInfo(VertexConfig config);
 };
 
 VERTEX_TEMPLATE

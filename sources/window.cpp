@@ -40,6 +40,8 @@ void Window::CreateSurface(Device& device)
 	SelectFormat(device);
 	SelectPresentMode(device);
 
+	int width, height;
+	glfwGetFramebufferSize(data, &width, &height);
 	config.extent.width = width;
 	config.extent.height = height;
 }

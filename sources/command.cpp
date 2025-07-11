@@ -110,11 +110,12 @@ void Command::Submit()
 	VkSubmitInfo submitInfo{};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 	submitInfo.waitSemaphoreCount = CUI(config.waitSemaphores.size());
-	submitInfo.pWaitSemaphores = config.waitSemaphores.data();
+	submitInfo.pWaitSemaphores = submitInfo.waitSemaphoreCount > 0 ? config.waitSemaphores.data() : nullptr;
+	submitInfo.pWaitDstStageMask = submitInfo.waitSemaphoreCount > 0 ? config.waitDestinations.data() : nullptr;
 	submitInfo.commandBufferCount = 1;
 	submitInfo.pCommandBuffers = &buffer;
 	submitInfo.signalSemaphoreCount = CUI(config.signalSemaphores.size());
-	submitInfo.pSignalSemaphores = config.signalSemaphores.data();
+	submitInfo.pSignalSemaphores = submitInfo.signalSemaphoreCount > 0 ? config.signalSemaphores.data() : nullptr;
 
 	if (vkQueueSubmit(device->GetQueue(config.queueIndex), 1, &submitInfo, config.fence) != VK_SUCCESS)
 		throw (std::runtime_error("Failed to submit command to a queue"));

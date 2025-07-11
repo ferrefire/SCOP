@@ -118,6 +118,13 @@ BufferConfig Buffer::GetConfig()
 	return (config);
 }
 
+VkBuffer& Buffer::GetBuffer()
+{
+	if (!buffer) throw (std::runtime_error("Buffer requested but not yet created"));
+
+	return (buffer);
+}
+
 void* Buffer::GetAddress()
 {
 	if (!config.mapped) throw (std::runtime_error("Requested buffer address but buffer is not mapped"));
@@ -129,9 +136,11 @@ void Buffer::CopyTo(VkBuffer target)
 {
 	if (!buffer) throw (std::runtime_error("Buffer does not exist"));
 	if (!target) throw (std::runtime_error("Buffer copy target does not exist"));
+	if (!device) throw (std::runtime_error("Buffer has no device"));
 
 	Command command;
 	CommandConfig commandConfig{};
+	commandConfig.queueIndex = device->GetQueueIndex(QueueType::Graphics);
 	command.Create(commandConfig, device);
 	command.Begin();
 
@@ -139,6 +148,9 @@ void Buffer::CopyTo(VkBuffer target)
 	copyInfo.size = config.size;
 
 	vkCmdCopyBuffer(command.GetBuffer(), buffer, target, 1, &copyInfo);
+
+	command.End();
+	command.Submit();
 }
 
 BufferConfig Buffer::StagingConfig()

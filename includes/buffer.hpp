@@ -38,6 +38,7 @@ class Buffer
 		void Destroy();
 
 		BufferConfig GetConfig();
+		VkBuffer& GetBuffer();
 		void* GetAddress();
 
 		void CopyTo(VkBuffer target);

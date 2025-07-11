@@ -18,6 +18,7 @@ struct CommandConfig
 	VkFence fence = VK_NULL_HANDLE;
 	std::vector<VkSemaphore> waitSemaphores;
 	std::vector<VkSemaphore> signalSemaphores;
+	std::vector<VkPipelineStageFlags> waitDestinations;
 	bool wait = true;
 };
 

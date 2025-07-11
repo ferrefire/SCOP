@@ -39,8 +39,6 @@ void Device::CreatePhysical()
 	physicalDevice = GetBestDevice(config).physicalDevice;
 
 	if (!physicalDevice) throw (std::runtime_error("Failed to find a suitable GPU"));
-
-	//PrintProperties();
 }
 
 void Device::CreateLogical()
@@ -67,7 +65,22 @@ void Device::CreateLogical()
 	if (config.tesselation) deviceFeatures.tessellationShader = VK_TRUE;
 	if (config.anisotropic) deviceFeatures.samplerAnisotropy = VK_TRUE;
 
-	std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+	//VkPhysicalDeviceDynamicRenderingFeatures deviceDynamicRenderingFeatures{};
+	//deviceDynamicRenderingFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES;
+	//deviceDynamicRenderingFeatures.dynamicRendering = VK_TRUE;
+	//deviceDynamicRenderingFeatures.pNext = nullptr;
+
+	//std::vector<const char*> deviceExtensions = { 
+	//	VK_KHR_SWAPCHAIN_EXTENSION_NAME, 
+	//	VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME,
+	//	VK_KHR_DEPTH_STENCIL_RESOLVE_EXTENSION_NAME,
+	//	VK_KHR_CREATE_RENDERPASS_2_EXTENSION_NAME,
+	//	VK_KHR_SYNCHRONIZATION_2_EXTENSION_NAME,
+	//	VK_KHR_SPIRV_1_4_EXTENSION_NAME,
+	//	//VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME
+	//};
+
+	std::vector<const char*> deviceExtensions = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
 
 	VkDeviceCreateInfo createInfo{};
 	createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
@@ -76,6 +89,8 @@ void Device::CreateLogical()
 	createInfo.pEnabledFeatures = &deviceFeatures;
 	createInfo.enabledExtensionCount = CUI(deviceExtensions.size());
 	createInfo.ppEnabledExtensionNames = deviceExtensions.data();
+	//createInfo.pNext = &deviceDynamicRenderingFeatures;
+	//createInfo.pNext = nullptr;
 
 	if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &logicalDevice) != VK_SUCCESS)
 		throw (std::runtime_error("Failed to create logical device"));

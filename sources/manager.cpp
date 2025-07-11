@@ -3,6 +3,7 @@
 #include "graphics.hpp"
 #include "renderer.hpp"
 #include "descriptor.hpp"
+#include "utilities.hpp"
 
 #include "pipeline.hpp"
 #include "mesh.hpp"
@@ -26,6 +27,72 @@ Manager::Manager()
 Manager::~Manager()
 {
 	Destroy();
+}
+
+void Test(VkCommandBuffer commandBuffer, uint32_t currentFrame)
+{
+	static bool start = true;
+	static Mesh<Position, VK_INDEX_TYPE_UINT16> mesh;
+	static Pass pass;
+	static Pipeline pipeline;
+
+	if (start)
+	{
+		Vertex<Position> vert;
+		vert.position = point3D({-0.5f, -0.5f, 0.0f});
+		mesh.AddVertex(vert);
+		vert.position = point3D({0.5f, 0.5f, 0.0f});
+		mesh.AddVertex(vert);
+		vert.position = point3D({-0.5f, 0.5f, 0.0f});
+		mesh.AddVertex(vert);
+		vert.position = point3D({0.5f, -0.5f, 0.0f});
+		mesh.AddVertex(vert);
+
+		mesh.AddIndex(0);
+		mesh.AddIndex(1);
+		mesh.AddIndex(2);
+		mesh.AddIndex(3);
+		mesh.AddIndex(1);
+		mesh.AddIndex(0);
+
+		mesh.Create(&Manager::GetDevice());
+
+		PassConfig passConfig = Pass::DefaultConfig();
+		pass.Create(passConfig, &Manager::GetDevice());
+
+		WindowConfig windowConfig = Manager::GetWindow().GetConfig();
+
+		PipelineConfig pipelineConfig = Pipeline::DefaultConfig();
+		pipelineConfig.shader = "screen";
+		pipelineConfig.vertexInfo = mesh.GetVertexInfo();
+		pipelineConfig.renderpass = pass.GetRenderpass();
+		pipelineConfig.scissor.extent = windowConfig.extent;
+		//pipelineConfig.dynamicStates.push_back(VK_DYNAMIC_STATE_VIEWPORT);
+		//pipelineConfig.dynamicStates.push_back(VK_DYNAMIC_STATE_SCISSOR);
+		//pipelineConfig.rendering.colorAttachmentCount = 1;
+		//pipelineConfig.rendering.pColorAttachmentFormats = &windowConfig.format.format;
+		pipeline.Create(pipelineConfig, &Manager::GetDevice());
+
+		Renderer::AddPass(&pass);
+
+		std::cout << "Test start" << std::endl;
+
+		start = false;
+	}
+	else if (commandBuffer)
+	{
+		pipeline.Bind(commandBuffer);
+		mesh.Bind(commandBuffer);
+		vkCmdDrawIndexed(commandBuffer, CUI(mesh.GetIndices().size()), 1, 0, 0, 0);
+	}
+	else
+	{
+		mesh.Destroy();
+		pass.Destroy();
+		pipeline.Destroy();
+
+		start = true;
+	}
 }
 
 void Manager::Create()
@@ -57,7 +124,9 @@ void Manager::CreateVulkan()
 	window.CreateSurface(device);
 	std::cout << "Window created: " << window << std::endl;
 	device.SelectQueues();
+	std::cout << "Queues selected" << std::endl;
 	device.CreateLogical();
+	std::cout << "Logival device created" << std::endl;
 	device.RetrieveQueues();
 	std::cout << "Device created: " << device << std::endl;
 	swapchain.Create(&window, &device);
@@ -82,6 +151,7 @@ void Manager::DestroyGLFW()
 
 void Manager::DestroyVulkan()
 {
+	Test(nullptr, 0);
 	swapchain.Destroy();
 	Renderer::Destroy();
 	window.DestroySurface();
@@ -106,6 +176,10 @@ Swapchain& Manager::GetSwapchain()
 
 void Manager::Start()
 {
+	Test(nullptr, 0);
+
+	Renderer::RegisterCall(Test);
+
 	//Renderer::Start();
 
 	//Buffer buffer;

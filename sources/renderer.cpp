@@ -85,6 +85,7 @@ void Renderer::CreateCommands()
 		commandConfig.wait = false;
 		commandConfig.fence = fences[i];
 		commandConfig.waitSemaphores = {renderSemaphores[i]};
+		commandConfig.waitDestinations = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
 		commandConfig.signalSemaphores = {presentSemaphores[i]};
 
 		commands[i].Create(commandConfig, device);
@@ -142,17 +143,78 @@ void Renderer::RecordCommands()
 {
 	commands[currentFrame].Begin();
 
-	//Continue from here
+	for (Pass* pass : passes)
+	{
+		pass->Begin(commands[currentFrame].GetBuffer(), renderIndex);
 
-	//Start render pass
+		for (std::function<void(VkCommandBuffer, uint32_t)> call : calls)
+		{
+			call(commands[currentFrame].GetBuffer(), currentFrame);
+		}
 
-	//Bind pipeline
+		pass->End(commands[currentFrame].GetBuffer());
+	}
 
-	//Bind mesh
+	/*VkImageMemoryBarrier renderBarrier{};
+	renderBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+	renderBarrier.srcAccessMask = 0;
+	renderBarrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+	renderBarrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	renderBarrier.newLayout = VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL_KHR;
+	renderBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	renderBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	renderBarrier.image = swapchain->GetImages()[renderIndex];
+	renderBarrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	renderBarrier.subresourceRange.baseMipLevel = 0;
+	renderBarrier.subresourceRange.levelCount = 1;
+	renderBarrier.subresourceRange.baseArrayLayer = 0;
+	renderBarrier.subresourceRange.layerCount = 1;
 
-	//Record commands
+	vkCmdPipelineBarrier(commands[currentFrame].GetBuffer(), VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 
+		VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, 0, 0, nullptr, 0, nullptr, 1, &renderBarrier);
 
-	//End render pass
+	VkRenderingAttachmentInfo attachmentInfo{};
+	attachmentInfo.sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO;
+	attachmentInfo.imageView = swapchain->GetViews()[renderIndex];
+	attachmentInfo.imageLayout = VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL_KHR;
+	attachmentInfo.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+	attachmentInfo.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+	attachmentInfo.clearValue = {.color = {{0.0f, 0.0f, 0.0f, 0.0f}}};
+
+	VkRenderingInfo renderingInfo{};
+	renderingInfo.sType = VK_STRUCTURE_TYPE_RENDERING_INFO;
+	renderingInfo.renderArea.offset = {0, 0};
+	renderingInfo.renderArea.extent = Manager::GetWindow().GetConfig().extent;
+	renderingInfo.layerCount = 1;
+	renderingInfo.colorAttachmentCount = 1;
+	renderingInfo.pColorAttachments = &attachmentInfo;
+
+	vkCmdBeginRendering(commands[currentFrame].GetBuffer(), &renderingInfo);
+
+	for (std::function<void(VkCommandBuffer, uint32_t)> call : calls)
+	{
+		call(commands[currentFrame].GetBuffer(), currentFrame);
+	}
+
+	vkCmdEndRendering(commands[currentFrame].GetBuffer());
+
+	VkImageMemoryBarrier presentBarrier{};
+	presentBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+	presentBarrier.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+	presentBarrier.dstAccessMask = 0;
+	presentBarrier.oldLayout = VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL_KHR;
+	presentBarrier.newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+	presentBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	presentBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	presentBarrier.image = swapchain->GetImages()[renderIndex];
+	presentBarrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	presentBarrier.subresourceRange.baseMipLevel = 0;
+	presentBarrier.subresourceRange.levelCount = 1;
+	presentBarrier.subresourceRange.baseArrayLayer = 0;
+	presentBarrier.subresourceRange.layerCount = 1;
+
+	vkCmdPipelineBarrier(commands[currentFrame].GetBuffer(), VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, 
+		VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 0, 0, nullptr, 0, nullptr, 1, &presentBarrier);*/
 
 	commands[currentFrame].End();
 
@@ -169,8 +231,20 @@ void Renderer::PresentFrame()
 	presentInfo.pSwapchains = &swapchain->GetSwapchain();
 	presentInfo.pImageIndices = &renderIndex;
 
-	if (vkQueuePresentKHR(device->GetQueue(device->GetQueueIndex(QueueType::Present)), &presentInfo) != VK_SUCCESS)
+	if (vkQueuePresentKHR(device->GetQueue(device->GetQueueIndex(QueueType::Graphics)), &presentInfo) != VK_SUCCESS)
 		throw (std::runtime_error("Failed to present frame"));
+}
+
+void Renderer::AddPass(Pass* pass)
+{
+	if (!pass) throw (std::runtime_error("Cannot add pass because it does not exist"));
+
+	passes.push_back(pass);
+}
+
+void Renderer::RegisterCall(std::function<void(VkCommandBuffer, uint32_t)> call)
+{
+	calls.push_back(call);
 }
 
 Device* Renderer::device = nullptr;
@@ -185,3 +259,4 @@ std::vector<VkSemaphore> Renderer::renderSemaphores;
 std::vector<VkSemaphore> Renderer::presentSemaphores;
 std::vector<Command> Renderer::commands;
 std::vector<Pass*> Renderer::passes;
+std::vector<std::function<void(VkCommandBuffer, uint32_t)>> Renderer::calls;

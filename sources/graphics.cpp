@@ -33,9 +33,17 @@ void Graphics::CreateInstance()
 	appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
 	appInfo.apiVersion = VK_API_VERSION_1_3;
 
+	uint32_t glfwExtensionCount = 0;
+	const char** glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+
+	std::vector<const char*> extensions(glfwExtensionCount);
+	for (int i = 0; i < glfwExtensionCount; i++) { extensions[i] = glfwExtensions[i]; }
+	//extensions.push_back(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
+
 	VkInstanceCreateInfo createInfo{};
 	createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-	createInfo.ppEnabledExtensionNames = glfwGetRequiredInstanceExtensions(&createInfo.enabledExtensionCount);
+	createInfo.enabledExtensionCount = CUI(extensions.size());
+	createInfo.ppEnabledExtensionNames = extensions.data();
 	createInfo.enabledLayerCount = validationLayersEnabled ? CUI(validationLayers.size()) : 0;
 	createInfo.ppEnabledLayerNames = validationLayersEnabled ? validationLayers.data() : nullptr;
 
