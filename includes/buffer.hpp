@@ -42,6 +42,7 @@ class Buffer
 		void* GetAddress();
 
 		void CopyTo(VkBuffer target);
+		void Update(void* data, size_t size);
 
 		static BufferConfig StagingConfig();
 		static BufferConfig VertexConfig();

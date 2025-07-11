@@ -18,8 +18,8 @@ struct WindowConfig
 class Window
 {
 	private:
-		uint32_t width = 800;
-		uint32_t height = 800;
+		uint32_t width = 1600;
+		uint32_t height = 900;
 		GLFWwindow* data = nullptr;
 		VkSurfaceKHR surface = nullptr;
 		WindowConfig config{};

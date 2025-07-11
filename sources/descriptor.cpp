@@ -109,9 +109,25 @@ void Descriptor::Destroy()
 	}
 }
 
+VkDescriptorSetLayout Descriptor::GetLayout()
+{
+	if (!layout) throw (std::runtime_error("Descriptor layout requested but does not exist"));
+
+	return (layout);
+}
+
 std::vector<DescriptorConfig> Descriptor::GetConfig()
 {
 	return (config);
+}
+
+void Descriptor::Bind(VkCommandBuffer commandBuffer, VkPipelineLayout pipelineLayout)
+{
+	if (!commandBuffer) throw (std::runtime_error("Cannot bind descriptor because command buffer does not exist"));
+	if (!pipelineLayout) throw (std::runtime_error("Cannot bind descriptor because pipeline layout does not exist"));
+	if (!set) throw (std::runtime_error("Descriptor has no set"));
+
+	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &set, 0, nullptr);
 }
 
 void Descriptor::Update(uint32_t binding, VkDescriptorBufferInfo* bufferInfo = nullptr, VkDescriptorImageInfo* imageInfo = nullptr)

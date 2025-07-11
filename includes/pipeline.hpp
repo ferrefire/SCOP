@@ -54,6 +54,8 @@ class Pipeline
 
 		void Destroy();
 
+		VkPipelineLayout GetLayout();
+
 		void Bind(VkCommandBuffer commandBuffer);
 
 		static PipelineConfig DefaultConfig();

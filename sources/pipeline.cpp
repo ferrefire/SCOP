@@ -147,6 +147,13 @@ void Pipeline::Destroy()
 	//std::cout << "Pipeline destroyed" << std::endl;
 }
 
+VkPipelineLayout Pipeline::GetLayout()
+{
+	if (!layout) throw (std::runtime_error("Pipeline layout requested but does not exist"));
+
+	return (layout);
+}
+
 void Pipeline::Bind(VkCommandBuffer commandBuffer)
 {
 	if (!commandBuffer) throw (std::runtime_error("Can't bind pipeline because the command buffer does not exist"));

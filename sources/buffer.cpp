@@ -153,6 +153,18 @@ void Buffer::CopyTo(VkBuffer target)
 	command.Submit();
 }
 
+void Buffer::Update(void *data, size_t size = 0)
+{
+	if (!config.mapped) throw (std::runtime_error("Cannot update buffer because it is not mapped"));
+	if (!data) throw (std::runtime_error("Cannot update buffer because data does not exist"));
+	if (!address) throw (std::runtime_error("Buffer address does not exist"));
+
+	if (size == 0) size = static_cast<size_t>(config.size);
+	else size = std::min(static_cast<size_t>(config.size), size);
+
+	memcpy(address, data, size);
+}
+
 BufferConfig Buffer::StagingConfig()
 {
 	BufferConfig config{};

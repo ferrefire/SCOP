@@ -39,7 +39,9 @@ class Descriptor
 		void Destroy();
 
 		std::vector<DescriptorConfig> GetConfig();
+		VkDescriptorSetLayout GetLayout();
 
+		void Bind(VkCommandBuffer commandBuffer, VkPipelineLayout pipelineLayout);
 		void Update(uint32_t binding, VkDescriptorBufferInfo* bufferInfo, VkDescriptorImageInfo* imageInfo);
 };
 
