@@ -57,24 +57,17 @@ void Test(VkCommandBuffer commandBuffer, uint32_t currentFrame)
 
 		mesh.Create(&Manager::GetDevice());
 
-		std::cout << "Mesh: " << mesh << std::endl;
-
 		PassConfig passConfig = Pass::DefaultConfig();
 		pass.Create(passConfig, &Manager::GetDevice());
-
-		WindowConfig windowConfig = Manager::GetWindow().GetConfig();
 
 		PipelineConfig pipelineConfig = Pipeline::DefaultConfig();
 		pipelineConfig.shader = "screen";
 		pipelineConfig.vertexInfo = mesh.GetVertexInfo();
 		pipelineConfig.renderpass = pass.GetRenderpass();
-		pipelineConfig.scissor.extent = windowConfig.extent;
 		pipelineConfig.rasterization.cullMode = VK_CULL_MODE_NONE;
 		pipeline.Create(pipelineConfig, &Manager::GetDevice());
 
 		Renderer::AddPass(&pass);
-
-		std::cout << "Test start" << std::endl;
 
 		start = false;
 	}
@@ -123,9 +116,7 @@ void Manager::CreateVulkan()
 	window.CreateSurface(device);
 	std::cout << "Window created: " << window << std::endl;
 	device.SelectQueues();
-	std::cout << "Queues selected" << std::endl;
 	device.CreateLogical();
-	std::cout << "Logival device created" << std::endl;
 	device.RetrieveQueues();
 	std::cout << "Device created: " << device << std::endl;
 	swapchain.Create(&window, &device);

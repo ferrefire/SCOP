@@ -4,8 +4,6 @@
 
 layout(location = 0) in vec3 localPosition;
 
-//layout(location = 0) out vec3 worldPosition;
-
 void main()
 {
 	gl_Position = vec4(localPosition.xy * 2.0, 0.0, 1.0);

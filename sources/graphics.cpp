@@ -38,7 +38,6 @@ void Graphics::CreateInstance()
 
 	std::vector<const char*> extensions(glfwExtensionCount);
 	for (int i = 0; i < glfwExtensionCount; i++) { extensions[i] = glfwExtensions[i]; }
-	//extensions.push_back(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
 
 	VkInstanceCreateInfo createInfo{};
 	createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;

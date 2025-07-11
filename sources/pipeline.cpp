@@ -211,13 +211,13 @@ PipelineConfig Pipeline::DefaultConfig()
 
 	config.viewport.x = 0.0f;
 	config.viewport.y = 0.0f;
-	config.viewport.width = 400.0f;
-	config.viewport.height = 400.0f;
+	config.viewport.width = Manager::GetWindow().GetConfig().extent.width;
+	config.viewport.height = Manager::GetWindow().GetConfig().extent.height;
 	config.viewport.minDepth = 0.0f;
 	config.viewport.maxDepth = 1.0f;
 
 	config.scissor.offset = {0, 0};
-	config.scissor.extent = VkExtent2D{};
+	config.scissor.extent = Manager::GetWindow().GetConfig().extent;
 
 	return (config);
 }
