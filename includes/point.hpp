@@ -60,3 +60,7 @@ std::ostream& operator<<(std::ostream& out, Point<T, S> point);
 typedef Point<float, 2> point2D;
 typedef Point<float, 3> point3D;
 typedef Point<float, 4> point4D;
+
+typedef Point<double, 2> dpoint2D;
+typedef Point<double, 3> dpoint3D;
+typedef Point<double, 4> dpoint4D;

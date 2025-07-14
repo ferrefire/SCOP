@@ -36,7 +36,7 @@ void Test(VkCommandBuffer commandBuffer, uint32_t currentFrame)
 	static Mesh<Position, VK_INDEX_TYPE_UINT16> mesh;
 	static Pass pass;
 	static Pipeline pipeline;
-	static point3D transformation = point3D({-0.5f, 0.0f, 1.0f});
+	static dpoint3D transformation = dpoint3D({-0.5, 0.0, 1.0});
 	static Buffer buffer;
 	static Descriptor descriptor;
 
@@ -66,7 +66,7 @@ void Test(VkCommandBuffer commandBuffer, uint32_t currentFrame)
 
 		BufferConfig bufferConfig{};
 		bufferConfig.mapped = true;
-		bufferConfig.size = sizeof(point3D);
+		bufferConfig.size = sizeof(dpoint3D);
 		buffer.Create(bufferConfig, &Manager::GetDevice(), &transformation[0]);
 
 		std::vector<DescriptorConfig> descriptorConfigs(1);
@@ -75,7 +75,7 @@ void Test(VkCommandBuffer commandBuffer, uint32_t currentFrame)
 		
 		VkDescriptorBufferInfo bufferInfo{};
 		bufferInfo.buffer = buffer.GetBuffer();
-		bufferInfo.range = sizeof(point3D);
+		bufferInfo.range = sizeof(dpoint3D);
 		descriptor.Update(0, &bufferInfo, nullptr);
 
 		PipelineConfig pipelineConfig = Pipeline::DefaultConfig();
@@ -92,14 +92,14 @@ void Test(VkCommandBuffer commandBuffer, uint32_t currentFrame)
 	}
 	else if (commandBuffer)
 	{
-		if (Input::GetKey(GLFW_KEY_W).down) transformation.y() -= 0.01f / transformation.z();
-		if (Input::GetKey(GLFW_KEY_S).down) transformation.y() += 0.01f / transformation.z();
-		if (Input::GetKey(GLFW_KEY_A).down) transformation.x() -= 0.01f / transformation.z();
-		if (Input::GetKey(GLFW_KEY_D).down) transformation.x() += 0.01f / transformation.z();
-		if (Input::GetKey(GLFW_KEY_UP).down) transformation.z() += 0.01f * transformation.z();
-		if (Input::GetKey(GLFW_KEY_DOWN).down) transformation.z() -= 0.01f * transformation.z();
+		if (Input::GetKey(GLFW_KEY_W).down) transformation.y() -= 0.01 / transformation.z();
+		if (Input::GetKey(GLFW_KEY_S).down) transformation.y() += 0.01 / transformation.z();
+		if (Input::GetKey(GLFW_KEY_A).down) transformation.x() -= 0.01 / transformation.z();
+		if (Input::GetKey(GLFW_KEY_D).down) transformation.x() += 0.01 / transformation.z();
+		if (Input::GetKey(GLFW_KEY_UP).down) transformation.z() += 0.01 * transformation.z();
+		if (Input::GetKey(GLFW_KEY_DOWN).down) transformation.z() -= 0.01 * transformation.z();
 
-		buffer.Update(&transformation[0], sizeof(point3D));
+		buffer.Update(&transformation[0], sizeof(dpoint3D));
 
 		pipeline.Bind(commandBuffer);
 		descriptor.Bind(commandBuffer, pipeline.GetLayout());

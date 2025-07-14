@@ -64,6 +64,7 @@ void Device::CreateLogical()
 	VkPhysicalDeviceFeatures deviceFeatures{};
 	if (config.tesselation) deviceFeatures.tessellationShader = VK_TRUE;
 	if (config.anisotropic) deviceFeatures.samplerAnisotropy = VK_TRUE;
+	if (config.shaderDouble) deviceFeatures.shaderFloat64 = VK_TRUE;
 
 	std::vector<const char*> deviceExtensions = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
 
@@ -234,6 +235,7 @@ DeviceInfo Device::GetBestDevice(DeviceConfig& config)
 		else if (!any && availableDevices[i].type != config.type) continue;
 		else if (config.tesselation && !availableDevices[i].deviceFeatures.tessellationShader) continue;
 		else if (config.anisotropic && !availableDevices[i].deviceFeatures.samplerAnisotropy) continue;
+		else if (config.shaderDouble && !availableDevices[i].deviceFeatures.shaderFloat64) continue;
 
 		best = i;
 		config.type = availableDevices[i].type;
