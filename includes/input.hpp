@@ -10,6 +10,9 @@ struct KeyInfo
 	bool down = false;
 	bool pressed = false;
 	bool released = false;
+	bool holding = false;
+	
+	float downTime = 0.0f;
 };
 
 class Input

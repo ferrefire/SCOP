@@ -47,7 +47,6 @@ void Test(VkCommandBuffer commandBuffer, uint32_t currentFrame)
 	static Mesh<Position | Coordinate, VK_INDEX_TYPE_UINT16> mesh;
 	static Pass pass;
 	static Pipeline pipeline;
-	//static dpoint4D transformation = dpoint4D({-0.5, 0.0, 1.0, 0.0});
 	static UniformData uniformData;
 	static Buffer buffer;
 	static Descriptor descriptor;
@@ -98,10 +97,14 @@ void Test(VkCommandBuffer commandBuffer, uint32_t currentFrame)
 		if (Input::GetKey(GLFW_KEY_S).down) uniformData.center.y() += Time::deltaTime / uniformData.zoom;
 		if (Input::GetKey(GLFW_KEY_A).down) uniformData.center.x() -= Time::deltaTime / uniformData.zoom;
 		if (Input::GetKey(GLFW_KEY_D).down) uniformData.center.x() += Time::deltaTime / uniformData.zoom;
+
 		if (Input::GetKey(GLFW_KEY_UP).down) uniformData.zoom += Time::deltaTime * uniformData.zoom;
 		if (Input::GetKey(GLFW_KEY_DOWN).down) uniformData.zoom -= Time::deltaTime * uniformData.zoom;
-		if (Input::GetKey(GLFW_KEY_RIGHT).pressed) uniformData.maxIterations += 1;
-		if (Input::GetKey(GLFW_KEY_LEFT).pressed) uniformData.maxIterations -= 1;
+
+		if (Input::GetKey(GLFW_KEY_RIGHT).pressed || (Input::GetKey(GLFW_KEY_RIGHT).holding && Time::newTick)) 
+			uniformData.maxIterations += 2;
+		if (Input::GetKey(GLFW_KEY_LEFT).pressed || (Input::GetKey(GLFW_KEY_LEFT).holding && Time::newTick)) 
+			uniformData.maxIterations -= 2;
 
 		buffer.Update(&uniformData, sizeof(uniformData));
 
@@ -150,6 +153,10 @@ void Manager::CreateGLFW()
 
 void Manager::CreateVulkan()
 {
+	DeviceConfig deviceConfig{};
+	if (config.integrated) deviceConfig.type = DeviceType::Integrated;
+	device.SetConfig(deviceConfig);
+
 	Graphics::CreateInstance();
 	device.CreatePhysical();
 	window.CreateSurface(device);
@@ -182,11 +189,15 @@ void Manager::DestroyGLFW()
 
 void Manager::DestroyVulkan()
 {
-	Test(nullptr, 0);
-	swapchain.Destroy();
-	Renderer::Destroy();
-	window.DestroySurface();
-	device.Destroy();
+	if (device.Created())
+	{
+		Test(nullptr, 0);
+		swapchain.Destroy();
+		Renderer::Destroy();
+		window.DestroySurface();
+		device.Destroy();
+	}
+
 	Graphics::DestroyInstance();
 }
 
@@ -229,6 +240,7 @@ void Manager::ParseArguments(char** arguments, const int& count)
 	for (int i = 1; i < count; i++)
 	{
 		if (std::string(arguments[i]) == "fs") config.fullscreen = true;
+		else if (std::string(arguments[i]) == "ig") config.integrated = true;
 	}
 }
 

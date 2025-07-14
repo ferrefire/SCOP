@@ -7,6 +7,7 @@
 struct ManagerConfig
 {
 	bool fullscreen = false;
+	bool integrated = false;
 };
 
 class Manager

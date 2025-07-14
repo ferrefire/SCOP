@@ -10,10 +10,19 @@ class Time
 		static float lastFrameTime;
 		static float currentFrameTime;
 
+		static float lastSecondInterval;
+		static bool secondFrameInterval;
+		static float lastTickInterval;
+		static bool tickFrameInterval;
+
 		static void SetFrameTimes();
+		static void SetFrameIntervals();
 
 	public:
 		static const float& deltaTime;
+
+		static const bool& newSecond;
+		static const bool& newTick;
 
 		static void Frame();
 };
