@@ -4,9 +4,16 @@
 #include "device.hpp"
 #include "swapchain.hpp"
 
+struct ManagerConfig
+{
+	bool fullscreen = false;
+};
+
 class Manager
 {
 	private:
+		static ManagerConfig config;
+
 		static Window window;
 		static Device device;
 		static Swapchain swapchain;
@@ -32,5 +39,6 @@ class Manager
 		static void Start();
 		static void Frame();
 		
+		static void ParseArguments(char **arguments, const int& count);
 		static bool ShouldClose();
 };

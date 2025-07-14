@@ -8,6 +8,7 @@ int main(int argc, char **argv)
 {
 	try
 	{
+		Manager::ParseArguments(argv, argc);
 		Manager::Create();
 	}
 	catch(const std::exception& e)

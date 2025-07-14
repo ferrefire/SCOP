@@ -9,6 +9,7 @@
 
 struct WindowConfig
 {
+	bool fullscreen = true;
 	VkSurfaceCapabilitiesKHR capabilities{};
 	VkSurfaceFormatKHR format{};
 	VkPresentModeKHR presentMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
@@ -30,6 +31,8 @@ class Window
 	public:
 		Window();
 		~Window();
+
+		void SetConfig(const WindowConfig& windowConfig);
 
 		void CreateFrame();
 		void CreateSurface(Device& device);

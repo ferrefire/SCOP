@@ -4,16 +4,17 @@
 
 layout(set = 0, binding = 0) uniform Variables
 {
-	dvec3 transformation;
+	dvec2 center;
+	double zoom;
+	float aspect;
+	int maxIterations;
 } variables;
 
 layout(location = 0) in vec2 localUV;
 
 layout(location = 0) out vec4 pixelColor;
 
-const dvec2 resolution = vec2(1600, 900);
-const double aspect = resolution.x / resolution.y;
-const int maxIterations = 30;
+//const int maxIterations = 30;
 
 vec3 ToNonLinear(vec3 linearColor)
 {
@@ -26,13 +27,13 @@ vec3 ToNonLinear(vec3 linearColor)
 
 vec3 Manderbrot(dvec2 uv)
 {
-	double x = (uv.x - 0.5) * 2.0 * aspect / variables.transformation.z + variables.transformation.x;
-	double y = (uv.y - 0.5) * 2.0 / variables.transformation.z + variables.transformation.y;
+	double x = (uv.x - 0.5) * 2.0 * variables.aspect / variables.zoom + variables.center.x;
+	double y = (uv.y - 0.5) * 2.0 / variables.zoom + variables.center.y;
 	dvec2 c = dvec2(x, y);
 	dvec2 z = dvec2(0.0);
 
 	int iterations;
-	for (iterations = 0; iterations < maxIterations; iterations++)
+	for (iterations = 0; iterations < variables.maxIterations; iterations++)
 	{
 		double tmpX = (z.x * z.x - z.y * z.y) + c.x;
 		z.y = 2.0 * z.x * z.y + c.y;
@@ -45,7 +46,7 @@ vec3 Manderbrot(dvec2 uv)
 	}
 
 	float smoothIteration = float(iterations) - log2(log2(float(dot(z, z)))) + 4.0;
-	float colorVal = smoothIteration / float(maxIterations);
+	float colorVal = smoothIteration / float(variables.maxIterations);
 	vec3 color = vec3(0.5 + 0.5 * cos(6.2831 * colorVal + vec3(0.0, 0.33, 0.67)));  
 
 	return (ToNonLinear(color));

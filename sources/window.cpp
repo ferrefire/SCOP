@@ -18,11 +18,21 @@ Window::~Window()
 	DestroySurface();
 }
 
+void Window::SetConfig(const WindowConfig& windowConfig)
+{
+	config = windowConfig;
+}
+
 void Window::CreateFrame()
 {
 	if (data) throw (std::runtime_error("Window already exists"));
 
-	data = glfwCreateWindow(width, height, "scop", nullptr, nullptr);
+	GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+	const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+	width = (config.fullscreen ? mode->width : mode->width / 2);
+	height = (config.fullscreen ? mode->height : mode->height / 2);
+
+	data = glfwCreateWindow(width, height, "scop", config.fullscreen ? monitor : nullptr, nullptr);
 
 	if (!data) throw (std::runtime_error("Failed to create window"));
 }

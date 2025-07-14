@@ -5,6 +5,7 @@
 #include "descriptor.hpp"
 #include "utilities.hpp"
 #include "input.hpp"
+#include "time.hpp"
 
 #include "pipeline.hpp"
 #include "mesh.hpp"
@@ -32,18 +33,32 @@ Manager::~Manager()
 	Destroy();
 }
 
+struct UniformData
+{
+	dpoint2D center;
+	double zoom;
+	float aspect;
+	int maxIterations;
+};
+
 void Test(VkCommandBuffer commandBuffer, uint32_t currentFrame)
 {
 	static bool start = true;
 	static Mesh<Position | Coordinate, VK_INDEX_TYPE_UINT16> mesh;
 	static Pass pass;
 	static Pipeline pipeline;
-	static dpoint3D transformation = dpoint3D({-0.5, 0.0, 1.0});
+	//static dpoint4D transformation = dpoint4D({-0.5, 0.0, 1.0, 0.0});
+	static UniformData uniformData;
 	static Buffer buffer;
 	static Descriptor descriptor;
 
 	if (start)
 	{
+		uniformData.center = dpoint2D({-0.5, 0.0});
+		uniformData.zoom = 1.0;
+		uniformData.aspect = float(Manager::GetWindow().GetConfig().extent.width) / float(Manager::GetWindow().GetConfig().extent.height);
+		uniformData.maxIterations = 30;
+
 		mesh.SetShape(Shape<Position | Coordinate, VK_INDEX_TYPE_UINT16>(ShapeType::Quad));
 
 		mesh.Create(&Manager::GetDevice());
@@ -53,8 +68,8 @@ void Test(VkCommandBuffer commandBuffer, uint32_t currentFrame)
 
 		BufferConfig bufferConfig{};
 		bufferConfig.mapped = true;
-		bufferConfig.size = sizeof(dpoint3D);
-		buffer.Create(bufferConfig, &Manager::GetDevice(), &transformation[0]);
+		bufferConfig.size = sizeof(uniformData);
+		buffer.Create(bufferConfig, &Manager::GetDevice(), &uniformData);
 
 		std::vector<DescriptorConfig> descriptorConfigs(1);
 		descriptorConfigs[0].stages = VK_SHADER_STAGE_FRAGMENT_BIT;
@@ -62,7 +77,7 @@ void Test(VkCommandBuffer commandBuffer, uint32_t currentFrame)
 		
 		VkDescriptorBufferInfo bufferInfo{};
 		bufferInfo.buffer = buffer.GetBuffer();
-		bufferInfo.range = sizeof(dpoint3D);
+		bufferInfo.range = sizeof(uniformData);
 		descriptor.Update(0, &bufferInfo, nullptr);
 
 		PipelineConfig pipelineConfig = Pipeline::DefaultConfig();
@@ -79,14 +94,16 @@ void Test(VkCommandBuffer commandBuffer, uint32_t currentFrame)
 	}
 	else if (commandBuffer)
 	{
-		if (Input::GetKey(GLFW_KEY_W).down) transformation.y() -= 0.01 / transformation.z();
-		if (Input::GetKey(GLFW_KEY_S).down) transformation.y() += 0.01 / transformation.z();
-		if (Input::GetKey(GLFW_KEY_A).down) transformation.x() -= 0.01 / transformation.z();
-		if (Input::GetKey(GLFW_KEY_D).down) transformation.x() += 0.01 / transformation.z();
-		if (Input::GetKey(GLFW_KEY_UP).down) transformation.z() += 0.01 * transformation.z();
-		if (Input::GetKey(GLFW_KEY_DOWN).down) transformation.z() -= 0.01 * transformation.z();
+		if (Input::GetKey(GLFW_KEY_W).down) uniformData.center.y() -= Time::deltaTime / uniformData.zoom;
+		if (Input::GetKey(GLFW_KEY_S).down) uniformData.center.y() += Time::deltaTime / uniformData.zoom;
+		if (Input::GetKey(GLFW_KEY_A).down) uniformData.center.x() -= Time::deltaTime / uniformData.zoom;
+		if (Input::GetKey(GLFW_KEY_D).down) uniformData.center.x() += Time::deltaTime / uniformData.zoom;
+		if (Input::GetKey(GLFW_KEY_UP).down) uniformData.zoom += Time::deltaTime * uniformData.zoom;
+		if (Input::GetKey(GLFW_KEY_DOWN).down) uniformData.zoom -= Time::deltaTime * uniformData.zoom;
+		if (Input::GetKey(GLFW_KEY_RIGHT).pressed) uniformData.maxIterations += 1;
+		if (Input::GetKey(GLFW_KEY_LEFT).pressed) uniformData.maxIterations -= 1;
 
-		buffer.Update(&transformation[0], sizeof(dpoint3D));
+		buffer.Update(&uniformData, sizeof(uniformData));
 
 		pipeline.Bind(commandBuffer);
 		descriptor.Bind(commandBuffer, pipeline.GetLayout());
@@ -122,6 +139,10 @@ void Manager::CreateGLFW()
 {
 	if (!glfwInit()) throw (std::runtime_error("Failed to initiate GLFW"));
 
+	WindowConfig windowConfig{};
+	windowConfig.fullscreen = config.fullscreen;
+	window.SetConfig(windowConfig);
+
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
 	window.CreateFrame();
@@ -149,6 +170,8 @@ void Manager::Destroy()
 
 	DestroyGLFW();
 	DestroyVulkan();
+
+	exit(EXIT_SUCCESS);
 }
 
 void Manager::DestroyGLFW()
@@ -191,17 +214,30 @@ void Manager::Start()
 
 void Manager::Frame()
 {
+	if (Input::GetKey(GLFW_KEY_ESCAPE).pressed) Destroy();
+
 	glfwPollEvents();
 
+	Time::Frame();
 	Input::Frame();
 
 	Renderer::Frame();
+}
+
+void Manager::ParseArguments(char** arguments, const int& count)
+{
+	for (int i = 1; i < count; i++)
+	{
+		if (std::string(arguments[i]) == "fs") config.fullscreen = true;
+	}
 }
 
 bool Manager::ShouldClose()
 {
 	return (glfwWindowShouldClose(window.GetData()));
 }
+
+ManagerConfig Manager::config{};
 
 Window Manager::window;
 Device Manager::device;
