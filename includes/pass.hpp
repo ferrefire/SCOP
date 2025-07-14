@@ -49,7 +49,7 @@ class Pass
 
 		void Destroy();
 
-		VkRenderPass& GetRenderpass();
+		const VkRenderPass& GetRenderpass() const;
 
 		void Begin(VkCommandBuffer commandBuffer, uint32_t renderIndex);
 		void End(VkCommandBuffer commandBuffer);

@@ -36,6 +36,9 @@ void Graphics::CreateInstance()
 	uint32_t glfwExtensionCount = 0;
 	const char** glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
 
+	if (glfwExtensions == nullptr) 
+		throw (std::runtime_error("Vulkan is either not available on this machine or it does not support window creation"));
+
 	std::vector<const char*> extensions(glfwExtensionCount);
 	for (int i = 0; i < glfwExtensionCount; i++) { extensions[i] = glfwExtensions[i]; }
 
@@ -47,9 +50,7 @@ void Graphics::CreateInstance()
 	createInfo.ppEnabledLayerNames = validationLayersEnabled ? validationLayers.data() : nullptr;
 
 	if (vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS)
-	{
 		throw (std::runtime_error("Failed to create Vulkan instance"));
-	}
 
 	std::cout << "Vulkan instance created" << std::endl << std::endl;
 }
@@ -63,7 +64,7 @@ void Graphics::DestroyInstance()
 	}
 }
 
-VkInstance& Graphics::GetInstance()
+const VkInstance& Graphics::GetInstance()
 {
 	if (!instance) throw (std::runtime_error("Instance requested but not yet created"));
 

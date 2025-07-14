@@ -120,7 +120,7 @@ void Pass::Destroy()
 	//std::cout << "Pass destroyed" << std::endl;
 }
 
-VkRenderPass& Pass::GetRenderpass()
+const VkRenderPass& Pass::GetRenderpass() const
 {
 	if (!renderpass) throw (std::runtime_error("Renderpass requested but not yet created"));
 
@@ -135,7 +135,7 @@ void Pass::Begin(VkCommandBuffer commandBuffer, uint32_t renderIndex)
 	if (state != Ended) throw (std::runtime_error("Pass has not yet ended"));
 
 	std::vector<VkClearValue> clearValues(1);
-	clearValues[0].color = {{0.0f, 0.0f, 0.0f, 0.0f}};
+	clearValues[0].color = {{0.75f, 0.75f, 0.75f, 1.0f}};
 
 	VkRenderPassBeginInfo beginInfo{};
 	beginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;

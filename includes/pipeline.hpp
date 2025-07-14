@@ -54,7 +54,7 @@ class Pipeline
 
 		void Destroy();
 
-		VkPipelineLayout GetLayout();
+		const VkPipelineLayout& GetLayout() const;
 
 		void Bind(VkCommandBuffer commandBuffer);
 

@@ -38,12 +38,12 @@ class Descriptor
 
 		void Destroy();
 
-		std::vector<DescriptorConfig> GetConfig();
-		VkDescriptorSetLayout GetLayout();
+		const std::vector<DescriptorConfig>& GetConfig() const;
+		const VkDescriptorSetLayout& GetLayout() const;
 
 		void Bind(VkCommandBuffer commandBuffer, VkPipelineLayout pipelineLayout);
 		void Update(uint32_t binding, VkDescriptorBufferInfo* bufferInfo, VkDescriptorImageInfo* imageInfo);
 };
 
-std::ostream& operator<<(std::ostream& out, DescriptorConfig& config);
-std::ostream& operator<<(std::ostream& out, Descriptor& descriptor);
+std::ostream& operator<<(std::ostream& out, const DescriptorConfig& config);
+std::ostream& operator<<(std::ostream& out, const Descriptor& descriptor);

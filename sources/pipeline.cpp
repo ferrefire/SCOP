@@ -147,7 +147,7 @@ void Pipeline::Destroy()
 	//std::cout << "Pipeline destroyed" << std::endl;
 }
 
-VkPipelineLayout Pipeline::GetLayout()
+const VkPipelineLayout& Pipeline::GetLayout() const
 {
 	if (!layout) throw (std::runtime_error("Pipeline layout requested but does not exist"));
 

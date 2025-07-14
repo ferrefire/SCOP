@@ -66,21 +66,21 @@ void Window::DestroySurface()
 	config = WindowConfig{};
 }
 
-GLFWwindow* Window::GetData()
+GLFWwindow* Window::GetData() const
 {
 	if (!data) throw (std::runtime_error("Window data requested but not yet created"));
 
 	return (data);
 }
 
-VkSurfaceKHR& Window::GetSurface()
+const VkSurfaceKHR& Window::GetSurface() const
 {
 	if (!surface) throw (std::runtime_error("Window surface requested but not yet created"));
 
 	return (surface);
 }
 
-WindowConfig Window::GetConfig()
+const WindowConfig& Window::GetConfig() const
 {
 	return (config);
 }

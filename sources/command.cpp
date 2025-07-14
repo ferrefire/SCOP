@@ -70,7 +70,7 @@ void Command::Destroy()
 	//std::cout << "Buffer destroyed" << std::endl;
 }
 
-const VkCommandBuffer& Command::GetBuffer()
+const VkCommandBuffer& Command::GetBuffer() const
 {
 	if (!buffer) throw (std::runtime_error("Command buffer requested but does not exist"));
 

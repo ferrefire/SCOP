@@ -12,6 +12,8 @@
 #include "pass.hpp"
 #include "bitmask.hpp"
 #include "command.hpp"
+#include "vertex.hpp"
+#include "shape.hpp"
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
@@ -33,7 +35,7 @@ Manager::~Manager()
 void Test(VkCommandBuffer commandBuffer, uint32_t currentFrame)
 {
 	static bool start = true;
-	static Mesh<Position, VK_INDEX_TYPE_UINT16> mesh;
+	static Mesh<Position | Coordinate, VK_INDEX_TYPE_UINT16> mesh;
 	static Pass pass;
 	static Pipeline pipeline;
 	static dpoint3D transformation = dpoint3D({-0.5, 0.0, 1.0});
@@ -42,22 +44,7 @@ void Test(VkCommandBuffer commandBuffer, uint32_t currentFrame)
 
 	if (start)
 	{
-		Vertex<Position> vert;
-		vert.position = point3D({-0.5f, -0.5f, 0.0f});
-		mesh.AddVertex(vert);
-		vert.position = point3D({0.5f, 0.5f, 0.0f});
-		mesh.AddVertex(vert);
-		vert.position = point3D({-0.5f, 0.5f, 0.0f});
-		mesh.AddVertex(vert);
-		vert.position = point3D({0.5f, -0.5f, 0.0f});
-		mesh.AddVertex(vert);
-
-		mesh.AddIndex(0);
-		mesh.AddIndex(1);
-		mesh.AddIndex(2);
-		mesh.AddIndex(3);
-		mesh.AddIndex(1);
-		mesh.AddIndex(0);
+		mesh.SetShape(Shape<Position | Coordinate, VK_INDEX_TYPE_UINT16>(ShapeType::Quad));
 
 		mesh.Create(&Manager::GetDevice());
 
@@ -157,7 +144,7 @@ void Manager::CreateVulkan()
 
 void Manager::Destroy()
 {
-	if (device.IsCreated() && vkDeviceWaitIdle(device.GetLogicalDevice()) != VK_SUCCESS)
+	if (device.Created() && vkDeviceWaitIdle(device.GetLogicalDevice()) != VK_SUCCESS)
 		throw (std::runtime_error("Failed to wait for device to be idle"));
 
 	DestroyGLFW();

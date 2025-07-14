@@ -23,5 +23,5 @@ class Graphics
 
 		static void DestroyInstance();
 
-		static VkInstance& GetInstance();
+		static const VkInstance& GetInstance();
 };

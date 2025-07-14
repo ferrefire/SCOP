@@ -45,7 +45,7 @@ class Command
 
 		void Destroy();
 
-		const VkCommandBuffer& GetBuffer();
+		const VkCommandBuffer& GetBuffer() const;
 
 		void Begin();
 		void End();

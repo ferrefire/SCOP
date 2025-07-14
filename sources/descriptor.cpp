@@ -109,14 +109,14 @@ void Descriptor::Destroy()
 	}
 }
 
-VkDescriptorSetLayout Descriptor::GetLayout()
+const VkDescriptorSetLayout& Descriptor::GetLayout() const
 {
 	if (!layout) throw (std::runtime_error("Descriptor layout requested but does not exist"));
 
 	return (layout);
 }
 
-std::vector<DescriptorConfig> Descriptor::GetConfig()
+const std::vector<DescriptorConfig>& Descriptor::GetConfig() const
 {
 	return (config);
 }
@@ -148,7 +148,7 @@ void Descriptor::Update(uint32_t binding, VkDescriptorBufferInfo* bufferInfo = n
 	vkUpdateDescriptorSets(device->GetLogicalDevice(), 1, &writeInfo, 0, nullptr);
 }
 
-std::ostream& operator<<(std::ostream& out, DescriptorConfig& config)
+std::ostream& operator<<(std::ostream& out, const DescriptorConfig& config)
 {
 	out << std::endl;
 	out << ENUM_VAL(config.type) << std::endl;
@@ -158,9 +158,9 @@ std::ostream& operator<<(std::ostream& out, DescriptorConfig& config)
 	return (out);
 }
 
-std::ostream& operator<<(std::ostream& out, Descriptor& descriptor)
+std::ostream& operator<<(std::ostream& out, const Descriptor& descriptor)
 {
-	for (DescriptorConfig& config : descriptor.GetConfig())
+	for (const DescriptorConfig& config : descriptor.GetConfig())
 	{
 		out << config;
 	}

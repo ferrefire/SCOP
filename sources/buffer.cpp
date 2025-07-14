@@ -113,19 +113,24 @@ void Buffer::Destroy()
 	}
 }
 
-BufferConfig Buffer::GetConfig()
+const bool Buffer::Created() const
+{
+	return (buffer != nullptr && memory != nullptr);
+}
+
+const BufferConfig& Buffer::GetConfig() const
 {
 	return (config);
 }
 
-VkBuffer& Buffer::GetBuffer()
+const VkBuffer& Buffer::GetBuffer() const
 {
 	if (!buffer) throw (std::runtime_error("Buffer requested but not yet created"));
 
 	return (buffer);
 }
 
-void* Buffer::GetAddress()
+const void* Buffer::GetAddress() const
 {
 	if (!config.mapped) throw (std::runtime_error("Requested buffer address but buffer is not mapped"));
 
@@ -195,7 +200,7 @@ BufferConfig Buffer::IndexConfig()
 	return (config);
 }
 
-std::ostream& operator<<(std::ostream& out, Buffer& buffer)
+std::ostream& operator<<(std::ostream& out, const Buffer& buffer)
 {
 	BufferConfig config = buffer.GetConfig();
 

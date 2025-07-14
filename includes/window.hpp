@@ -37,9 +37,9 @@ class Window
 		void DestroyFrame();
 		void DestroySurface();
 
-		GLFWwindow* GetData();
-		VkSurfaceKHR& GetSurface();
-		WindowConfig GetConfig();
+		GLFWwindow* GetData() const;
+		const VkSurfaceKHR& GetSurface() const;
+		const WindowConfig& GetConfig() const;
 
 		bool CanPresent(Device& device, int presentQueueIndex);
 };

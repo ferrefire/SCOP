@@ -37,9 +37,11 @@ class Buffer
 
 		void Destroy();
 
-		BufferConfig GetConfig();
-		VkBuffer& GetBuffer();
-		void* GetAddress();
+		const bool Created() const;
+
+		const BufferConfig& GetConfig() const;
+		const VkBuffer& GetBuffer() const;
+		const void* GetAddress() const;
 
 		void CopyTo(VkBuffer target);
 		void Update(void* data, size_t size);
@@ -49,4 +51,4 @@ class Buffer
 		static BufferConfig IndexConfig();
 };
 
-std::ostream& operator<<(std::ostream& out, Buffer& buffer);
+std::ostream& operator<<(std::ostream& out, const Buffer& buffer);

@@ -20,7 +20,6 @@ run_command ()
 	elif [[ $1 == "run" ]] || [[ $1 == "r" ]]; then
 		if [[ $OSTYPE == "linux-gnu" ]] || [[ $OSTYPE == "darwin" ]]; then
 			if test -f $path/build/$project; then
-				#set_env
 				cd $path/build
 				./$project $args
 			else
