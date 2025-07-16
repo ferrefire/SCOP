@@ -123,6 +123,8 @@ void Renderer::Destroy()
 
 void Renderer::Frame()
 {
+	if (passes.size() == 0 || calls.size() == 0) return;
+
 	if (vkWaitForFences(device->GetLogicalDevice(), 1, &fences[currentFrame], VK_TRUE, UINT64_MAX) != VK_SUCCESS)
 		throw (std::runtime_error("Failed to wait for fence"));
 

@@ -37,6 +37,7 @@ class Manager
 		static Device& GetDevice();
 		static Swapchain& GetSwapchain();
 
+		static void Run();
 		static void Start();
 		static void Frame();
 		

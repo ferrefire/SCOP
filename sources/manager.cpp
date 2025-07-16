@@ -33,7 +33,7 @@ Manager::~Manager()
 	Destroy();
 }
 
-struct UniformData
+/*struct UniformData
 {
 	dpoint2D center;
 	double zoom;
@@ -123,7 +123,7 @@ void Test(VkCommandBuffer commandBuffer, uint32_t currentFrame)
 
 		start = true;
 	}
-}
+}*/
 
 void Manager::Create()
 {
@@ -191,7 +191,7 @@ void Manager::DestroyVulkan()
 {
 	if (device.Created())
 	{
-		Test(nullptr, 0);
+		//Test(nullptr, 0);
 		swapchain.Destroy();
 		Renderer::Destroy();
 		window.DestroySurface();
@@ -216,11 +216,19 @@ Swapchain& Manager::GetSwapchain()
 	return (swapchain);
 }
 
+void Manager::Run()
+{
+	Start();
+
+	while (!ShouldClose()) { Frame(); }
+	
+	Destroy();
+}
+
 void Manager::Start()
 {
-	Test(nullptr, 0);
-
-	Renderer::RegisterCall(Test);
+	//Test(nullptr, 0);
+	//Renderer::RegisterCall(Test);
 }
 
 void Manager::Frame()
