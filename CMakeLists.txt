@@ -6,12 +6,12 @@ option(DEV "DEV" OFF)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-FILE(GLOB SOURCE_FILES sources/*.cpp templates/*.tpp)
+FILE(GLOB SOURCE_FILES sources/*.cpp)
 
 #add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 add_library(${PROJECT_NAME} ${SOURCE_FILES})
 
-target_include_directories(${PROJECT_NAME} PUBLIC "includes" "templates")
+target_include_directories(${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/templates)
 
 set(GLFW_BUILD_WAYLAND False)#check false replace by off
 set(BUILD_WSI_WAYLAND_SUPPORT False)
