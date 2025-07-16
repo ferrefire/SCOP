@@ -6,7 +6,7 @@ option(DEV "DEV" OFF)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-FILE(GLOB SOURCE_FILES sources/*.cpp)
+FILE(GLOB SOURCE_FILES sources/*.cpp templates/*.tpp)
 
 #add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 add_library(${PROJECT_NAME} ${SOURCE_FILES})
